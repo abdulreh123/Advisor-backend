@@ -1,17 +1,23 @@
-
+const bcrypt = require("bcrypt");
 const AdvisorModel = require("../advisor/model");
 const Student = require("./Model");
 const StudentCourses = require("./StudentCourses.model");
 const Courses = require("../courses/model");
-
+const user = require("../auth/model")
 export default class DepartmentService {
   constructor() { }
+   private hashPassword = async (password: string): Promise<string> => {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+    return hash;
+  };
   //  Create Student
   createStudent = async (data: any): Promise<any> => {
     try {
       const department = await Student.create({ ...data });
-      if (data.courses) {
-        await StudentCourses.create({ ...data.courses })
+      if (data.user) {
+        const password = await this.hashPassword(data.user.password)
+        await user.create({ userName: data.user.username,password:password,userStudent:department.id})
       }
       return department;
     } catch (error) {

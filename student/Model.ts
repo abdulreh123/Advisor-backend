@@ -10,11 +10,11 @@ const StudentModel = sequelize.define(
       allowNull: false,
       primaryKey: true,
     },
-    userId: {
-        type: Sequelize.INTEGER,
-        unique: true,
-        allowNull: false,
-      },
+    userId:{
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      unique:true
+    },
     name: {
       type: Sequelize.STRING,
       allowNull: false,

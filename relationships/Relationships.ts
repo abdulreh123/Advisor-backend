@@ -4,6 +4,7 @@ const Courses = require("../courses/model");
 const Department = require("../department/model");
 const Student = require("../student/Model");
 const chairman = require("../chairman/model");
+const user = require("../auth/model");
 const StudentCourses = require("../student/StudentCourses.model");
 
 
@@ -24,6 +25,21 @@ chairman.hasOne(Department, {
 Department.belongsTo(chairman, {
   as: "chairman",
   foreignKey: "chairmanId",
+  sourceKey: "id",
+});
+user.belongsTo(chairman, {
+  as: "chairman",
+  foreignKey: "userChairman",
+  sourceKey: "id",
+});
+user.belongsTo(Advisor, {
+  as: "Advisor",
+  foreignKey: "userAdvisor",
+  sourceKey: "id",
+});
+user.belongsTo(Student, {
+  as: "Student",
+  foreignKey: "userStudent",
   sourceKey: "id",
 });
 Courses.belongsTo(Department, {

@@ -11,6 +11,7 @@
         "async-redis": "^2.0.0",
         "axios": "^0.21.1",
         "babel": "^6.23.0",
+        "bcrypt": "^5.0.1",
         "bcryptjs": "^2.4.3",
         "concurrently": "^6.2.0",
         "config": "^3.3.6",
@@ -63,7 +64,7 @@
     },
     "compilerOptions": {
         "esModuleInterop": true
-      },
+    },
     "engines": {
         "node": "11.10.0",
         "npm": "6.7.0"
