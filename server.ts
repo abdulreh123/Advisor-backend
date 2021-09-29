@@ -5,6 +5,10 @@ const port: any = 7000;
 
 const resources = [
   {
+    endpoint: "/api/auth",
+    router: Routes.authRoutes,
+  },
+  {
     endpoint: "/api/department",
     router: Routes.departmentRoutes,
   },

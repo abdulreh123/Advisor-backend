@@ -10,7 +10,6 @@ export default class AdvisorController extends StudentService{
   findAll = async (req: any, res: any) => {
     try {
         const advisors = await this.getStudents();
-        console.log('hello')
         res.status(200).json({ success: true, cache: false, data: advisors });
 
     } catch (error) {
@@ -51,7 +50,6 @@ export default class AdvisorController extends StudentService{
       if (!req.body.name) {
         res.status(400).json({ message: "Form inputs cannot be empty" });
       }
-      console.log("hello")
       const advisors = await this.createStudent(req.body);
       res.status(200).json({ success: true, data: advisors,message:` ${advisors.name} added!` });
     } catch (error) {
@@ -105,7 +103,6 @@ export default class AdvisorController extends StudentService{
   courseUpdate = async (req: any, res: any) => {
     try {
       const { studentId } = req.params;
-      console.log(studentId)
       const body = req.body;
       const advisors = await this.addRemoveCourse(studentId, body);
       res.status(200).json({ success: true, data: advisors,message:` grade ${body.type}!` });

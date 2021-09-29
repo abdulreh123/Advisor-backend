@@ -2,16 +2,16 @@ import express = require("express");
 import StudentController from "./controllers";
 const router = express.Router();
 const StudentControllers = new StudentController();
-//import Middlewares from "../helpers/Middlewares";
+import Middlewares from "../helpers/Middlewares";
 //const middleware = new Middlewares();
 
-// router.use(middleware.auth);
+router.use(Middlewares.auth);
 // const seeDepartment = ["super_admin","can_see_department"];
 // const updateDepartment = [
 //   "super_admin",
 //   "can_manage_organization",
 // ];
-const destroyDepartment = ["super_admin"];
+
 
 router.get(
   "/",

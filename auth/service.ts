@@ -1,9 +1,13 @@
 
-// const user = require("./model");
-
-// export default class DepartmentService {
-//   constructor() {}
-//   //  Create Department
+const user = require("./model");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const Student = require("../student/Model");
+const chairman = require("../chairman/model");
+const advisor = require("../advisor/model");
+export default class AuthService {
+  constructor() {}
+  //  Create Department
 //   verify = async (username: any,password:number): Promise<any> => {
 //     try {
 //         const login = user.findOne({where:{username:username}})
@@ -14,64 +18,88 @@
 //       // throw new Error("An Error occurred while creating department!");
 //     }
 //   };
-//   //  Get Departments
-//   getDepartments = async (): Promise<any> => {
-//     try {
-//       const departments = await DepartmentModel.findAll({ });
-//       return departments;
-//     } catch (error) {
-//       // throw new Error(error);
-//       throw new Error("An Error occurred while fetching departments!");
-//     }
-//   };
-//   //  Get Department
-//   getDepartment = async (departmentId: number): Promise<any> => {
-//     try {
-//       const result = await DepartmentModel.findByPk(departmentId, {
-//         include:[
-//           {
-//             model:Courses,
-//             as: "courses"
-//           }
-//         ]
-//       });
-//       return result;
-//     } catch (error) {
-//       throw error;
-//       throw new Error("An Error occurred while fetching department!");
-//     }
-//   };
-//   //  Update Department
-//   updateDepartment = async (
-//     departmentId: number,
-//     data: any,
-//   ): Promise<any> => {
-//     try {
-//       const department = await this.getDepartment(departmentId);
-//       await DepartmentModel.update(
-//         { ...data },
-//         { where: { id: departmentId } }
-//       );
-//       return department;
-//     } catch (error) {
-//       throw new Error("An Error occurred while updating departments!");
-//     }
-//   };
-//   //  Delete Department
-//   deleteDepartment = async (
-//     departmentId: number,
-//   ): Promise<any> => {
-//     try {
-//       const department = await DepartmentModel.findOne({
-//         where: {
-//           id: departmentId,
-//         },
-//         paranoid: false,
-//       });
-//       department.destroy();
-//       return { message: "Department record deleted!" };
-//     } catch (error) {
-//       throw new Error("An Error occurred while deleting departments!");
-//     }
-//   };
-// }
+   /**
+   * Authenticate user via form input
+   * @param data { companyEmail:string, password:string }
+   */
+    async loginViaForm(data: any) {
+        let users;
+        let id;
+        let status
+        try {
+          const {  username, password } = data;
+          users = await user.findOne({where:{userName:username},
+        include:[
+            {
+              model:Student,
+              as:"Student"
+            },
+            {
+              model:chairman,
+              as:"chairman"
+            },
+            {
+              model:advisor,
+              as:"Advisor"
+            },
+        ]
+        });
+          if (!users) throw Error("Invalid Credentials");
+          const comparePassword = await this.comparePassword(
+            password,
+            users.password
+          );
+          if (!comparePassword) {
+            throw Error("Invalid Credentials");
+          }
+          if(users.userAdvisor){
+              id=users.Advisor?.userId
+              status="Advisor"
+          }
+          if(users.userStudent){
+              id=users.Student?.userId 
+              status="Student"
+          }
+          if(users.userChairman){
+              id=users.Chairman?.userId
+              status="Chairman"
+          }
+          if(users.userSuperAdmin){
+              status="SuperAdmin"
+          }
+          const token = await this.generateToken({
+            id: id,
+            status: status,
+          });
+          const result = {
+            token,
+            user: {
+                id: id,
+              status: status,
+            },
+          };
+    
+          return result;
+        } catch (error) {
+          throw Error(error);
+        }
+      }
+      protected async comparePassword(
+        input: string,
+        compare: string
+      ): Promise<boolean> {
+        const match = await bcrypt.compare(input, compare);
+        return match;
+      }
+  //  Generate jwt token
+  protected generateToken = async (data: any): Promise<any> => {
+    try {
+      const token = await jwt.sign(data, "neuAdvisor", {
+        expiresIn: 36000,
+      });
+      return token;
+    } catch (error) {
+      throw Error(error);
+    }
+  };
+}

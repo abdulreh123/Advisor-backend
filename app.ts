@@ -2,9 +2,9 @@ import express = require("express");
 const cors = require("cors");
 
 
-//const session = require("express-session");
+const session = require("express-session");
 // initalize sequelize with session store
-// const SequelizeStore = require("connect-session-sequelize")(session.Store);
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -27,7 +27,20 @@ export default class App {
     // this.app.use(multer().any());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
-    this.app.use(cors());
+    this.app.use(cors()); 
+    this.app.use(
+      session({
+        secret: "sosar",
+        resave: false,
+        saveUninitialized: false,
+        store: new SequelizeStore({
+          db: connectDb,
+          // expiration: (24*90) * 60 * 60 * 1000 // Expire after 90 days (3 months)
+          expiration: (24*90) * 60 * 60 * 1000 , // Expire after 90 days (3 months)
+        }),
+        name: "sis"
+      })
+    );
   }
 
   //  Add all endpoint and router

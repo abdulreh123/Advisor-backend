@@ -17,7 +17,7 @@ export default class DepartmentService {
       const department = await Student.create({ ...data });
       if (data.user) {
         const password = await this.hashPassword(data.user.password)
-        await user.create({ userName: data.user.username,password:password,userStudent:department.id})
+        await user.create({ userName: data.user.userName,password:password,userStudent:department.id})
       }
       return department;
     } catch (error) {
