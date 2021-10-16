@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const Group = require("./model");
 const Student = require("../student/Model");
-const Course = require("../courses/Model");
+const Course = require("../courses/model");
 class GroupService {
     constructor() {
         //  Create Group
