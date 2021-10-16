@@ -16,6 +16,9 @@ const StudentCoursesModel = sequelize.define(
     CrPts: {
         type: Sequelize.STRING,
       },
+    academicYear: {
+        type: Sequelize.STRING,
+      },
   },
 );
 

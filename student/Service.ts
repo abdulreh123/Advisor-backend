@@ -3,10 +3,15 @@ const AdvisorModel = require("../advisor/model");
 const Student = require("./Model");
 const StudentCourses = require("./StudentCourses.model");
 const Courses = require("../courses/model");
+const Group = require("../courseGroup/model");
+import { any } from "sequelize/types/lib/operators";
+import GroupService from "../courseGroup/Service";
+const GroupServices = new GroupService();
 const user = require("../auth/model")
+const { Op,Sequelize } = require("sequelize");
 export default class DepartmentService {
   constructor() { }
-   private hashPassword = async (password: string): Promise<string> => {
+  private hashPassword = async (password: string): Promise<string> => {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
     return hash;
@@ -17,7 +22,7 @@ export default class DepartmentService {
       const department = await Student.create({ ...data });
       if (data.user) {
         const password = await this.hashPassword(data.user.password)
-        await user.create({ userName: data.user.userName,password:password,userStudent:department.id})
+        await user.create({ userName: data.user.userName, password: password, userStudent: department.id })
       }
       return department;
     } catch (error) {
@@ -34,10 +39,6 @@ export default class DepartmentService {
             model: AdvisorModel,
             as: "advisor"
           },
-          {
-            model: Courses,
-            as: "Courses"
-          }
         ]
       });
       return departments;
@@ -45,7 +46,49 @@ export default class DepartmentService {
       throw error;
     }
   };
-  //  Get Student
+  //  Get Transcript
+  getTranscript = async (studentId: number): Promise<any> => {
+    try {
+      const result = await Student.findByPk(studentId, {
+        include: [
+          {
+            model: AdvisorModel,
+            as: "advisor"
+          },
+          {
+            model: Group,
+            as: "Group",
+            include: [{
+              model: Courses,
+              as: "Course",
+            }],
+          }
+        ],
+      });
+      let transcript: any = []
+      const groups = result.Group
+      const academicYears = await groups.map((group: any) => group.studentsCourses.academicYear)
+      const uniqueArray = academicYears.filter(function (item: any, pos: any) {
+        return academicYears.indexOf(item) == pos;
+      })
+    await Promise.all(  await uniqueArray.map(async (group: any) => {
+        const year = await groups.filter((year: any) => year.studentsCourses.academicYear === group)
+        const totalcrPts =await year.map((item:any) => parseInt(item.studentsCourses.CrPts)).reduce((prev:number, next:number) => prev + next);
+        const totalcredit =await year.map((item:any) => parseInt(item.Course.credit)).reduce((prev:number, next:number) => prev + next);
+        const data = {
+          year: group,
+          courses: year,
+          totalcrPts:totalcrPts,
+          totalcredit:totalcredit,
+          gpa:totalcrPts/totalcredit
+        }
+        transcript.push(data)
+      }))
+      return transcript;
+    } catch (error) {
+      throw error;
+    }
+  };
   getStudent = async (studentId: number): Promise<any> => {
     try {
       const result = await Student.findByPk(studentId, {
@@ -55,8 +98,12 @@ export default class DepartmentService {
             as: "advisor"
           },
           {
-            model: Courses,
-            as: "Courses"
+            model: Group,
+            as: "Group",
+            include: [{
+              model: Courses,
+              as: "Course",
+            }]
           }
         ]
       });
@@ -119,18 +166,38 @@ export default class DepartmentService {
     data: any,
   ) => {
     try {
-      if(data.type=="add"){
-        await data.courses.map(async(course:number)=>{
-          await StudentCourses.create({studentId:studentId ,courseId:course})
+      let error: string
+      const student = await this.getStudent(studentId);
+      if (data.type == "add") {
+        await Promise.all(await data.courses.map(async (course: number) => {
+          const group = await GroupServices.getGroup(course)
+          const prerequisites = group?.Course?.prerequisites
+          if (prerequisites) {
+            const allCode = student?.Group.map(group => {
+              if (group?.studentsCourses.grade) {
+                return (group?.Course?.code)
+              }
+            })
+            console.log(allCode)
+            if (allCode.includes(prerequisites)) {
+              await StudentCourses.create({ studentId: studentId, courseGroupId: course, academicYear: data?.year })
+            } else {
+              error = `student did not take the required prerequisites for ${group.Course.name}`
+            }
+          } else {
+            await StudentCourses.create({ studentId: studentId, courseGroupId: course, academicYear: data.year })
+          }
+        }))
+      }
+      if (data.type == "remove") {
+        await data.courses.map(async (course: number) => {
+          await StudentCourses.destroy({ where: { studentId: studentId, courseGroupId: course, grade: null } })
         })
       }
-      if(data.type=="remove"){
-        await data.courses.map(async(course:number)=>{
-          await StudentCourses.destroy({where:{studentId:studentId ,courseId:course,grade:null}})
-        })
+      if (error) {
+        throw Error(error)
       }
-      const department = await this.getStudent(studentId);
-      return department;
+      return student;
     } catch (error) {
       throw error;
     }

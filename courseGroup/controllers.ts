@@ -1,7 +1,7 @@
 
 // const DepartmentService = require("../services/DepartmentService");
-import CourseService from './Service'
-export default class AdvisorController extends CourseService{
+import GroupService from './Service'
+export default class AdvisorController extends GroupService{
   /**
    * @desc  Get all Departments
    * @param req Request
@@ -9,8 +9,8 @@ export default class AdvisorController extends CourseService{
    */
   findAll = async (req: any, res: any) => {
     try {
-        const course = await this.getCourses();
-        res.status(200).json({ success: true, cache: false, data: course });
+        const Group = await this.getGroups();
+        res.status(200).json({ success: true, cache: false, data: Group });
 
     } catch (error) {
       res.status(400).json({
@@ -28,9 +28,9 @@ export default class AdvisorController extends CourseService{
    */
   findOne = async (req: any, res: any) => {
     try {
-      const { courseId } = req.params;
-      const course = await this.getCourse(courseId);
-      res.status(200).json({ success: true, data: course });
+      const { groupId } = req.params;
+      const Group = await this.getGroup(groupId);
+      res.status(200).json({ success: true, data: Group });
     } catch (error) {
       res.status(400).json({
         success: false,
@@ -50,8 +50,8 @@ export default class AdvisorController extends CourseService{
       if (!req.body.name) {
         res.status(400).json({ message: "Form inputs cannot be empty" });
       }
-      const course = await this.createCourses(req.body);
-      res.status(200).json({ success: true, data: course,message:`${course.name} added!` });
+      const Group = await this.createGroup(req.body);
+      res.status(200).json({ success: true, data: Group,message:`${Group.name} added!` });
     } catch (error) {
       res.status(400).json({
         success: false,
@@ -68,9 +68,9 @@ export default class AdvisorController extends CourseService{
    */
   update = async (req: any, res: any) => {
     try {
-      const { courseId } = req.params;
+      const { groupId } = req.params;
       const body = req.body;
-      const advisors = await this.updateCourse(courseId, body);
+      const advisors = await this.updateGroup(groupId, body);
       res.status(200).json({ success: true, data: advisors,message:` ${advisors.name} updated!` });
     } catch (error) {
       res
@@ -79,24 +79,6 @@ export default class AdvisorController extends CourseService{
     }
   };
 
-  // /**
-  //  * @desc  Update Department
-  //  * @param req Request
-  //  * @param res Response
-  //  */
-  // AddRemoveStudent = async (req: any, res: any) => {
-  //   try {
-  //     const { courseId } = req.params;
-  //     const body = req.body;
-  //     const advisors = await this.addRemoveStudent(courseId, body);
-  //     res.status(200).json({ success: true, data: advisors,message:` student ${body.type}!` });
-  //   } catch (error) {
-  //     res
-  //       .status(400)
-  //       .json({ success: false, data: [], message: error.message });
-  //   }
-  // };
-
   /**
    * @desc  Delete Department
    * @param req Request
@@ -104,8 +86,8 @@ export default class AdvisorController extends CourseService{
    */
   delete = async (req: any, res: any) => {
     try {
-      const { courseId } = req.params;
-      const advisors = await this.deleteCourses(courseId);
+      const { groupId } = req.params;
+      const advisors = await this.deleteGroup(groupId);
       res.status(200).json({ success: true, data: advisors });
     } catch (error) {
       res.status(400).json({

@@ -1,5 +1,6 @@
 
 const DepartmentModel = require("./model");
+const Chairman = require("../chairman/model");
 const Courses = require("../courses/model");
 
 export default class DepartmentService {
@@ -17,10 +18,17 @@ export default class DepartmentService {
   //  Get Departments
   getDepartments = async (): Promise<any> => {
     try {
-      const departments = await DepartmentModel.findAll({ });
+      const departments = await DepartmentModel.findAll({ 
+        include:[
+          {
+            model:Chairman,
+            as: "chairman"
+          }
+        ]
+      });
       return departments;
     } catch (error) {
-      // throw new Error(error);
+      throw error;
       throw new Error("An Error occurred while fetching departments!");
     }
   };

@@ -25,6 +25,14 @@ const resources = [
     router: Routes.coursesRoutes,
   },
   {
+    endpoint: "/api/chairman",
+    router: Routes.chairmanRoutes,
+  },
+  {
+    endpoint: "/api/group",
+    router: Routes.groupRoutes,
+  },
+  {
     endpoint: "/api",
     router: (req: any, res: any) => {
       res.status(200).json("Advisor REST API");

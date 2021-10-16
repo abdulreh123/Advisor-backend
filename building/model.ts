@@ -1,8 +1,8 @@
 import Sequelize = require("sequelize");
 const sequelize = require("../helpers/Connection");
 
-const DepartmentModel = sequelize.define(
-  "departments",
+const BuildingModel = sequelize.define(
+  "buildings",
   {
     id: {
       type: Sequelize.INTEGER,
@@ -10,22 +10,23 @@ const DepartmentModel = sequelize.define(
       allowNull: false,
       primaryKey: true,
     },
-    name: {
-      type: Sequelize.STRING,
+    name:{
+      type:Sequelize.STRING,
       allowNull: false,
-      unique: true,
-    },
-    chairmanId: {
-      type: Sequelize.INTEGER,
-      allowNull: true,
-    },
+  },
+  longitude:{
+      type:Sequelize.FLOAT,
+  },
+  latitude:{
+      type:Sequelize.FLOAT,
+  },
   },
   {
-    tableName: "departments",
+    tableName: "buildings",
     deletedAt: "deletedAt",
     paranoid: true,
     timestamps: true,
   }
 );
 
-module.exports = DepartmentModel;
+module.exports = BuildingModel;

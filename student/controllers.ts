@@ -41,6 +41,25 @@ export default class AdvisorController extends StudentService{
   };
 
   /**
+   * @desc  Get single department
+   * @param req Request
+   * @param res Response
+   */
+  studentTranscript = async (req: any, res: any) => {
+    try {
+      const { studentId } = req.params;
+      const advisors = await this.getTranscript(studentId);
+      res.status(200).json({ success: true, data: advisors });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        data: [],
+        message: error.message,
+      });
+    }
+  };
+
+  /**
    * @desription  Create Department
    * @param req Request
    * @param res Response
@@ -88,7 +107,7 @@ export default class AdvisorController extends StudentService{
       const { studentId,courseId } = req.params;
       const body = req.body;
       const advisors = await this.updateGrade(studentId,courseId, body);
-      res.status(200).json({ success: true, data: advisors,message:` grade Updated updated!` });
+      res.status(200).json({ success: true, data: advisors,message:` grade Updated` });
     } catch (error) {
       res
         .status(400)
@@ -105,7 +124,7 @@ export default class AdvisorController extends StudentService{
       const { studentId } = req.params;
       const body = req.body;
       const advisors = await this.addRemoveCourse(studentId, body);
-      res.status(200).json({ success: true, data: advisors,message:` grade ${body.type}!` });
+      res.status(200).json({ success: true, data: advisors,message:` course ${body.type}!` });
     } catch (error) {
       res
         .status(400)

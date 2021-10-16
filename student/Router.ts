@@ -5,7 +5,7 @@ const StudentControllers = new StudentController();
 import Middlewares from "../helpers/Middlewares";
 //const middleware = new Middlewares();
 
-router.use(Middlewares.auth);
+//router.use(Middlewares.auth);
 // const seeDepartment = ["super_admin","can_see_department"];
 // const updateDepartment = [
 //   "super_admin",
@@ -20,6 +20,10 @@ router.get(
 router.get(
   "/:studentId",
   StudentControllers.findOne
+);
+router.get(
+  "/transcript/:studentId",
+  StudentControllers.studentTranscript
 );
 
 router.put(

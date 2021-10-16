@@ -1,6 +1,7 @@
 
 const courses = require("./model");
 const Student = require("../student/Model");
+const Groups = require("../courseGroup/model");
 const StudentCourses = require("../student/StudentCourses.model");
 
 export default class CourseService {
@@ -35,6 +36,10 @@ export default class CourseService {
           {
             model: Student,
             as: "Students"
+          },
+          {
+            model: Groups,
+            as: "Groups"
           }
         ]
       });
@@ -59,28 +64,28 @@ export default class CourseService {
       throw error;
     }
   };  
-  addRemoveStudent = async (
-    courseId: number,
-    data: any,
-  ) => {
-    try {
-      if(data.type=="added"){
-        await data.students.map(async(students:number)=>{
-          await StudentCourses.create({studentId:students ,courseId:courseId})
-        })
-      }
-      if(data.type=="removed"){
-        await data.students.map(async(students:number)=>{
-          await StudentCourses.destroy({where:{studentId:students ,courseId:courseId,grade:null}})
-        })
-      }
-      const department = await this.getCourse(courseId);
-      return department;
-    } catch (error) {
-      throw error;
-    }
+  // addRemoveStudent = async (
+  //   courseId: number,
+  //   data: any,
+  // ) => {
+  //   try {
+  //     if(data.type=="added"){
+  //       await data.students.map(async(students:number)=>{
+  //         await StudentCourses.create({studentId:students ,courseId:courseId})
+  //       })
+  //     }
+  //     if(data.type=="removed"){
+  //       await data.students.map(async(students:number)=>{
+  //         await StudentCourses.destroy({where:{studentId:students ,courseId:courseId,grade:null}})
+  //       })
+  //     }
+  //     const department = await this.getCourse(courseId);
+  //     return department;
+  //   } catch (error) {
+  //     throw error;
+  //   }
 
-  }
+  // }
   //  Delete advisor
   deleteCourses = async (
     courseId: number,

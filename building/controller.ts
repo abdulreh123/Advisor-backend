@@ -48,7 +48,7 @@ export default class authControllers {
    */
   currentUser = async (req: any, res: any) => {
     try {
-      const userId = req.session?.user?.username;
+      const userId = req.session?.user?.userName;
       if (!userId) throw new Error("Please login");
       const user = await AuthService.verifyUser(userId);
       console.log(user)

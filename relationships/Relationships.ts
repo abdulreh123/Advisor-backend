@@ -2,10 +2,13 @@
 const Advisor = require("../advisor/model");
 const Courses = require("../courses/model");
 const Department = require("../department/model");
+const Group = require("../courseGroup/model");
 const Student = require("../student/Model");
 const chairman = require("../chairman/model");
 const user = require("../auth/model");
 const StudentCourses = require("../student/StudentCourses.model");
+const Buildings = require("../building/model");
+const Rooms = require("../rooms/model");
 
 
 Department.hasMany(Courses, {
@@ -25,6 +28,18 @@ chairman.hasOne(Department, {
 Department.belongsTo(chairman, {
   as: "chairman",
   foreignKey: "chairmanId",
+  sourceKey: "id",
+});
+Advisor.hasOne(Group, {
+    as: "Lecturer",
+    onDelete: "CASCADE",
+    foreignKey: "lecturerId",
+    hooks: true,
+    sourceKey: "id",
+});
+Group.belongsTo(Advisor, {
+  as: "Group",
+  foreignKey: "lecturerId",
   sourceKey: "id",
 });
 user.belongsTo(chairman, {
@@ -54,6 +69,20 @@ Advisor.hasMany(Student, {
     foreignKey: "advisorId",
     sourceKey: "id",
 });
+Courses.hasMany(Group, {
+    as: "Groups",
+    onDelete: "CASCADE",
+    hooks: true,
+    foreignKey: "courseId",
+    sourceKey: "id",
+});
+Group.belongsTo(Courses, {
+    as: "Course",
+    onDelete: "CASCADE",
+    hooks: true,
+    foreignKey: "courseId",
+    sourceKey: "id",
+});
 Student.belongsTo(Advisor, {
     as: "advisor",
     onDelete: "CASCADE",
@@ -66,11 +95,24 @@ Advisor.belongsTo(Department,{
   foreignKey: "departmentId",
   targetKey: "id",
 });
-Student.belongsToMany(Courses, {
+Student.belongsToMany(Group, {
     through: StudentCourses,
-    as: "Courses",
+    as: "Group",
 });
-Courses.belongsToMany(Student, {
+Group.belongsToMany(Student, {
     through: StudentCourses,
     as: "Students",
+});
+
+Buildings.hasOne(Rooms, {
+  as: "Building",
+  onDelete: "CASCADE",
+  hooks: true,
+  foreignKey: "buildingId",
+  sourceKey: "id",
+});
+Rooms.belongsTo(Buildings, {
+as: "Rooms",
+foreignKey: "buildingId",
+sourceKey: "id",
 });
