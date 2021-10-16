@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+      "target": "es6",
+  
+      "resolveJsonModule": true,
+  
+      "module": "commonjs",
+  
+      "lib": [
+        "DOM",
+        "DOM.Iterable",
+        "ES6",
+        "ScriptHost"
+      ],
+  
+      "outDir": "./build",
+  
+      "strict": true,
+  
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "baseUrl": "./app",
+      "forceConsistentCasingInFileNames": true
+    },
+    "include": [
+      "**/*.ts"
+    ],
+    "exclude": [
+      "node_modules"
+    ]
+  }
+  

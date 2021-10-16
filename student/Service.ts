@@ -113,7 +113,7 @@ export default class DepartmentService {
     }
   };
   CalculateCrPoints = async (grade: string, credit: number) => {
-    let points: number
+    let points: number | undefined;
     switch (grade) {
       case "AA":
         points = 4 * credit
@@ -166,14 +166,14 @@ export default class DepartmentService {
     data: any,
   ) => {
     try {
-      let error: string
+      let error: string | undefined;
       const student = await this.getStudent(studentId);
       if (data.type == "add") {
         await Promise.all(await data.courses.map(async (course: number) => {
           const group = await GroupServices.getGroup(course)
           const prerequisites = group?.Course?.prerequisites
           if (prerequisites) {
-            const allCode = student?.Group.map(group => {
+            const allCode = student?.Group.map((group:any) => {
               if (group?.studentsCourses.grade) {
                 return (group?.Course?.code)
               }

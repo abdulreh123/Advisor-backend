@@ -70,7 +70,9 @@
         "npm": "6.7.0"
     },
     "scripts": {
-        "start-dev": "ts-node-dev --transpile-only server.ts"
+        "start-dev": "ts-node-dev --transpile-only server.ts",
+        "start": " npm run build && node ./build/server.js",
+        "build": "tsc"
     },
     "keywords": [
         "Advisor"

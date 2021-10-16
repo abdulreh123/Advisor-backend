@@ -113,7 +113,7 @@ export default class AuthService {
 */
   async verifyUser(userName: string) {
     try {
-      let status:string
+      let status:string | undefined;
       const users = await user.findOne({
         where: {
           userName:userName
