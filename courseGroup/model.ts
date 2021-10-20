@@ -22,20 +22,24 @@ const CoursesModel = sequelize.define(
         type:Sequelize.DataTypes.ENUM("monday", "tuesday", "wednesday","thursday","friday","saturday"),
         allowNull: false,
     },
-    time:{
+    timeStart:{
         type:Sequelize.TIME,
         allowNull: false,
     },
-    duration:{
-        type:Sequelize.INTEGER,
+    timeEnd:{
+        type:Sequelize.TIME,
         allowNull: false,
     },
     room:{
-        type:Sequelize.STRING,
+        type:Sequelize.INTEGER,
         allowNull: false, 
     },
     courseId:{
         type:Sequelize.INTEGER,
+        allowNull: false,
+    },
+    year:{
+        type:Sequelize.STRING,
         allowNull: false,
     }
   },

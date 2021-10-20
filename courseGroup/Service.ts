@@ -1,6 +1,7 @@
 
 const Group = require("./model");
 const Student = require("../student/Model");
+const Advisor = require("../advisor/Model");
 const Course = require("../courses/model");
 
 export default class GroupService {
@@ -35,6 +36,34 @@ export default class GroupService {
       throw error;
     }
   };
+  //  Get Group
+  getLecturerGroup = async (lecturerId:number): Promise<any> => {
+    try {
+      const group = await Group.findAll({
+        
+        where:{
+          lecturerId:lecturerId
+        },
+        include: [
+          {
+            model: Advisor,
+            as: "Advisor",
+          },
+          {
+            model: Student,
+            as: "Students"
+          },
+          {
+            model: Course,
+            as: "Course",
+          }
+        ]
+      });
+      return group;
+    } catch (error) {
+      throw error;
+    }
+  };
   //  Get group
   getGroup = async (groupId: number): Promise<any> => {
     try {
@@ -47,6 +76,29 @@ export default class GroupService {
           {
             model: Course,
             as: "Course",
+          }
+        ]
+      });
+      return group;
+    } catch (error) {
+      throw error;
+    }
+  };
+  //  Get group
+  getDepartmentGroup = async (departmentId: number): Promise<any> => {
+    try {
+      const group = await Group.findAll({
+        include: [
+          {
+            model: Student,
+            as: "Students"
+          },
+          {
+            model: Course,
+            as: "Course",
+            where:{
+              departmentId:departmentId
+            }
           }
         ]
       });

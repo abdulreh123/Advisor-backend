@@ -20,6 +20,25 @@ export default class AdvisorController extends GroupService{
       });
     }
   };
+  /**
+   * @desc  Get all Departments
+   * @param req Request
+   * @param res Response
+   */
+  findByDepartment = async (req: any, res: any) => {
+    try {
+      const { departmentId } = req.params;
+        const Group = await this.getDepartmentGroup(departmentId);
+        res.status(200).json({ success: true, cache: false, data: Group });
+
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        data: [],
+        message: error.message,
+      });
+    }
+  };
 
   /**
    * @desc  Get single department
@@ -30,6 +49,24 @@ export default class AdvisorController extends GroupService{
     try {
       const { groupId } = req.params;
       const Group = await this.getGroup(groupId);
+      res.status(200).json({ success: true, data: Group });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        data: [],
+        message: error.message,
+      });
+    }
+  };
+  /**
+   * @desc  Get single department
+   * @param req Request
+   * @param res Response
+   */
+  findByLecturer = async (req: any, res: any) => {
+    try {
+      const { lecturerId } = req.params;
+      const Group = await this.getLecturerGroup(lecturerId);
       res.status(200).json({ success: true, data: Group });
     } catch (error) {
       res.status(400).json({

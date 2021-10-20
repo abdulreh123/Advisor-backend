@@ -6,3 +6,5 @@ exports.coursesRoutes = require('../courses/Router');
 exports.authRoutes = require('../auth/Router');
 exports.chairmanRoutes = require('../chairman/Router');
 exports.groupRoutes = require('../courseGroup/Router');
+exports.buildingRoutes = require('../building/Router');
+exports.roomRoutes = require('../rooms/Router');

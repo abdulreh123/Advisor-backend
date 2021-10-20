@@ -39,6 +39,43 @@ export default class AdvisorController extends StudentService{
       });
     }
   };
+  /**
+   * @desc  Get single department
+   * @param req Request
+   * @param res Response
+   */
+  automate = async (req: any, res: any) => {
+    try {
+      const { studentId } = req.params;
+      const { year } = req.query;
+      const advisors = await this.AutomateSelection(studentId,year);
+      res.status(200).json({ success: true, data: advisors });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        data: [],
+        message: error.message,
+      });
+    }
+  };
+  /**
+   * @desc  Get single department
+   * @param req Request
+   * @param res Response
+   */
+  findByAdvisor = async (req: any, res: any) => {
+    try {
+      const { advisorId } = req.params;
+      const advisors = await this.getStudentByAdvisor(advisorId);
+      res.status(200).json({ success: true, data: advisors });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        data: [],
+        message: error.message,
+      });
+    }
+  };
 
   /**
    * @desc  Get single department

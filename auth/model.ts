@@ -23,7 +23,7 @@ const CoursesModel = sequelize.define(
       allowNull: true,
     },
     userSuperAdmin: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.BOOLEAN,
       allowNull: true,
     },
     userName: {

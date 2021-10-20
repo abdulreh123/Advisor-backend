@@ -1,6 +1,7 @@
 
 const AdvisorModel = require("../advisor/model");
 const Student = require("../student/Model");
+const Group = require("../courseGroup/model");
 
 export default class DepartmentService {
   constructor() { }
@@ -31,6 +32,10 @@ export default class DepartmentService {
           {
             model: Student,
             as: "Students"
+          },
+          {
+            model: Group,
+            as: "Group"
           }
         ]
       });

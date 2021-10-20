@@ -22,6 +22,14 @@ router.get(
   StudentControllers.findOne
 );
 router.get(
+  "/automate/:studentId",
+  StudentControllers.automate
+);
+router.get(
+  "/advisor/:advisorId",
+  StudentControllers.findByAdvisor
+);
+router.get(
   "/transcript/:studentId",
   StudentControllers.studentTranscript
 );

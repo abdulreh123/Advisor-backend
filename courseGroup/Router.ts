@@ -21,6 +21,14 @@ router.get(
   "/:groupId",
   GourseControllers.findOne
 );
+router.get(
+  "/department/:departmentId",
+  GourseControllers.findByDepartment
+);
+router.get(
+  "/lecturer/:lecturerId",
+  GourseControllers.findByLecturer
+);
 
 router.put(
   "/:groupId",

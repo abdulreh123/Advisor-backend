@@ -51,7 +51,6 @@ export default class authControllers {
       const userId = req.session?.user?.username;
       if (!userId) throw new Error("Please login");
       const user = await AuthService.verifyUser(userId);
-      console.log(user)
       res.status(200).json({ success: true, data: user });
     } catch (error) {
       res.status(400).json({

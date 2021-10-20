@@ -1,7 +1,7 @@
 
 // const DepartmentService = require("../services/DepartmentService");
-import RoomService from './Service'
-export default class RoomController extends RoomService{
+import BuildingService from './Service'
+export default class BuildingController extends BuildingService{
   /**
    * @desc  Get all Departments
    * @param req Request
@@ -9,8 +9,8 @@ export default class RoomController extends RoomService{
    */
   findAll = async (req: any, res: any) => {
     try {
-        const Room = await this.getRooms();
-        res.status(200).json({ success: true, cache: false, data: Room });
+        const Building = await this.getBuildings();
+        res.status(200).json({ success: true, cache: false, data: Building });
 
     } catch (error) {
       res.status(400).json({
@@ -28,9 +28,9 @@ export default class RoomController extends RoomService{
    */
   findOne = async (req: any, res: any) => {
     try {
-      const { roomId } = req.params;
-      const Room = await this.getRoom(roomId);
-      res.status(200).json({ success: true, data: Room });
+      const { buildingId } = req.params;
+      const Building = await this.getBuilding(buildingId);
+      res.status(200).json({ success: true, data: Building });
     } catch (error) {
       res.status(400).json({
         success: false,
@@ -50,8 +50,8 @@ export default class RoomController extends RoomService{
       if (!req.body.name) {
         res.status(400).json({ message: "Form inputs cannot be empty" });
       }
-      const Room = await this.createRooms(req.body);
-      res.status(200).json({ success: true, data: Room,message:`${Room.name} added!` });
+      const Building = await this.createBuilding(req.body);
+      res.status(200).json({ success: true, data: Building,message:`${Building.name} added!` });
     } catch (error) {
       res.status(400).json({
         success: false,
@@ -68,9 +68,9 @@ export default class RoomController extends RoomService{
    */
   update = async (req: any, res: any) => {
     try {
-      const { roomId } = req.params;
+      const { buildingId } = req.params;
       const body = req.body;
-      const advisors = await this.updateRooms(roomId, body);
+      const advisors = await this.updateBuilding(buildingId, body);
       res.status(200).json({ success: true, data: advisors,message:` ${advisors.name} updated!` });
     } catch (error) {
       res
@@ -86,8 +86,8 @@ export default class RoomController extends RoomService{
    */
   delete = async (req: any, res: any) => {
     try {
-      const { roomId } = req.params;
-      const advisors = await this.deleteRooms(roomId);
+      const { buildingId } = req.params;
+      const advisors = await this.deleteBuilding(buildingId);
       res.status(200).json({ success: true, data: advisors });
     } catch (error) {
       res.status(400).json({

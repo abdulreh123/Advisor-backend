@@ -183,7 +183,7 @@ export default class AuthService {
       const result = {
         token,
         user: {
-          userId: users.Advisor?.userId || users.Student?.userId || users.chairman?.userId || users.userSuperAdmin,
+          userId: users.Advisor?.id || users.Student?.userId || users.chairman?.userId || users.userSuperAdmin,
           username: users.userName,
           name: users.Advisor?.name || users.Student?.name || users.chairman?.name || users.name,
           surname: users.Advisor?.surname || users.Student?.surname || users.chairman?.surname || users.userSuperAdmin,

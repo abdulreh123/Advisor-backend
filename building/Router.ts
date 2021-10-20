@@ -1,7 +1,7 @@
 import express = require("express");
-import RoomController from "./controller";
+import BuildingController from "./controllers";
 const router = express.Router();
-const RoomControllers = new RoomController();
+const BuildingControllers = new BuildingController();
 //import Middlewares from "../helpers/Middlewares";
 //const middleware = new Middlewares();
 
@@ -15,25 +15,25 @@ const destroyDepartment = ["super_admin"];
 
 router.get(
   "/",
-  RoomControllers.findAll
+  BuildingControllers.findAll
 );
 router.get(
-  "/:roomId",
-  RoomControllers.findOne
+  "/:buildingId",
+  BuildingControllers.findOne
 );
 
 router.put(
-  "/:roomId",
-  RoomControllers.update
+  "/:buildingId",
+  BuildingControllers.update
 );
 router.post(
   "/create",
-  RoomControllers.create
+  BuildingControllers.create
 );
 
 router.delete(
-  "/:roomId",
-  RoomControllers.delete
+  "/:buildingId",
+  BuildingControllers.delete
 );
 
 module.exports = router;
