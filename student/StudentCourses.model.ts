@@ -19,6 +19,9 @@ const StudentCoursesModel = sequelize.define(
     academicYear: {
         type: Sequelize.STRING,
       },
+   approvedBy: {
+        type: Sequelize.STRING,
+      },
   },
 );
 

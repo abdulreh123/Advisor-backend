@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const Group = require("./model");
 const Student = require("../student/Model");
+const Advisor = require("../advisor/Model");
 const Course = require("../courses/model");
 class GroupService {
     constructor() {
@@ -46,6 +47,34 @@ class GroupService {
                 throw error;
             }
         });
+        //  Get Group
+        this.getLecturerGroup = (lecturerId) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const group = yield Group.findAll({
+                    where: {
+                        lecturerId: lecturerId
+                    },
+                    include: [
+                        {
+                            model: Advisor,
+                            as: "Advisor",
+                        },
+                        {
+                            model: Student,
+                            as: "Students"
+                        },
+                        {
+                            model: Course,
+                            as: "Course",
+                        }
+                    ]
+                });
+                return group;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
         //  Get group
         this.getGroup = (groupId) => __awaiter(this, void 0, void 0, function* () {
             try {
@@ -58,6 +87,30 @@ class GroupService {
                         {
                             model: Course,
                             as: "Course",
+                        }
+                    ]
+                });
+                return group;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+        //  Get group
+        this.getDepartmentGroup = (departmentId) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const group = yield Group.findAll({
+                    include: [
+                        {
+                            model: Student,
+                            as: "Students"
+                        },
+                        {
+                            model: Course,
+                            as: "Course",
+                            where: {
+                                departmentId: departmentId
+                            }
                         }
                     ]
                 });

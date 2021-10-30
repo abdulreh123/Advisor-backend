@@ -16,6 +16,8 @@ const StudentControllers = new controllers_1.default();
 // ];
 router.get("/", StudentControllers.findAll);
 router.get("/:studentId", StudentControllers.findOne);
+router.get("/automate/:studentId", StudentControllers.automate);
+router.get("/advisor/:advisorId", StudentControllers.findByAdvisor);
 router.get("/transcript/:studentId", StudentControllers.studentTranscript);
 router.put("/:studentId", StudentControllers.update);
 router.put("/:studentId/:courseId", StudentControllers.gradeUpdate);

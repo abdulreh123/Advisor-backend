@@ -8,3 +8,4 @@ exports.chairmanRoutes = require('../chairman/Router');
 exports.groupRoutes = require('../courseGroup/Router');
 exports.buildingRoutes = require('../building/Router');
 exports.roomRoutes = require('../rooms/Router');
+exports.paymentRoutes = require('../payments/Router');

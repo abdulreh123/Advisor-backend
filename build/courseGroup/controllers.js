@@ -36,6 +36,25 @@ class AdvisorController extends Service_1.default {
             }
         });
         /**
+         * @desc  Get all Departments
+         * @param req Request
+         * @param res Response
+         */
+        this.findByDepartment = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { departmentId } = req.params;
+                const Group = yield this.getDepartmentGroup(departmentId);
+                res.status(200).json({ success: true, cache: false, data: Group });
+            }
+            catch (error) {
+                res.status(400).json({
+                    success: false,
+                    data: [],
+                    message: error.message,
+                });
+            }
+        });
+        /**
          * @desc  Get single department
          * @param req Request
          * @param res Response
@@ -44,6 +63,25 @@ class AdvisorController extends Service_1.default {
             try {
                 const { groupId } = req.params;
                 const Group = yield this.getGroup(groupId);
+                res.status(200).json({ success: true, data: Group });
+            }
+            catch (error) {
+                res.status(400).json({
+                    success: false,
+                    data: [],
+                    message: error.message,
+                });
+            }
+        });
+        /**
+         * @desc  Get single department
+         * @param req Request
+         * @param res Response
+         */
+        this.findByLecturer = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { lecturerId } = req.params;
+                const Group = yield this.getLecturerGroup(lecturerId);
                 res.status(200).json({ success: true, data: Group });
             }
             catch (error) {

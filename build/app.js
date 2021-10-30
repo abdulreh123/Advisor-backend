@@ -5,6 +5,7 @@ const cors = require("cors");
 const session = require("express-session");
 // initalize sequelize with session store
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
+const path = require("path");
 const dotenv = require("dotenv");
 dotenv.config();
 const connectDb = require("./helpers/Connection");
@@ -34,6 +35,10 @@ class App {
             }),
             name: "sis"
         }));
+        this.app.use(express.static('frontBuild'));
+        this.app.get('*', (req, res) => {
+            res.sendFile(path.resolve(__dirname, 'frontBuild', 'index.html'));
+        });
     }
     //  Add all endpoint and router
     resources(routeControllers) {

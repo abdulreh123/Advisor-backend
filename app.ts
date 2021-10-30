@@ -5,6 +5,7 @@ const cors = require("cors");
 const session = require("express-session");
 // initalize sequelize with session store
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
+const path = require("path");
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -36,11 +37,17 @@ export default class App {
         store: new SequelizeStore({
           db: connectDb,
           // expiration: (24*90) * 60 * 60 * 1000 // Expire after 90 days (3 months)
-          expiration: (24*90) * 60 * 60 * 1000 , // Expire after 90 days (3 months)
+          expiration: (1) * 60 * 60 * 1000 , // Expire after 90 days (3 months)
         }),
         name: "sis"
       })
     );
+    this.app.use(express.static('frontBuild'));
+    this.app.get('/app',(req:any,res:any)=>{
+      res.sendFile(path.resolve(__dirname,'frontBuild','index.html'))
+    })
+    this.app.use(express.static(path.join(__dirname, "public")));
+    this.app.use("/static/assets/uploads", express.static(path.join(__dirname, "payments")));
   }
 
   //  Add all endpoint and router

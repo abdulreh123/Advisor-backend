@@ -64,7 +64,10 @@ class DepartmentService {
         //  Get Transcript
         this.getTranscript = (studentId) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const result = yield Student.findByPk(studentId, {
+                const result = yield Student.findOne({
+                    where: {
+                        userId: studentId
+                    },
                     include: [
                         {
                             model: AdvisorModel,
@@ -108,6 +111,33 @@ class DepartmentService {
         this.getStudent = (studentId) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const result = yield Student.findByPk(studentId, {
+                    include: [
+                        {
+                            model: AdvisorModel,
+                            as: "advisor"
+                        },
+                        {
+                            model: Group,
+                            as: "Group",
+                            include: [{
+                                    model: Courses,
+                                    as: "Course",
+                                }]
+                        }
+                    ]
+                });
+                return result;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+        this.getStudentByAdvisor = (advisorId) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const result = yield Student.findAll({
+                    where: {
+                        advisorId: advisorId
+                    },
                     include: [
                         {
                             model: AdvisorModel,
@@ -189,7 +219,6 @@ class DepartmentService {
                                     return ((_a = group === null || group === void 0 ? void 0 : group.Course) === null || _a === void 0 ? void 0 : _a.code);
                                 }
                             });
-                            console.log(allCode);
                             if (allCode.includes(prerequisites)) {
                                 yield StudentCourses.create({ studentId: studentId, courseGroupId: course, academicYear: data === null || data === void 0 ? void 0 : data.year });
                             }
@@ -226,6 +255,56 @@ class DepartmentService {
                 }, { where: { studentId: studentId, courseId: courseId } });
                 const student = yield this.getStudent(studentId);
                 return student;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+        this.AutomateSelection = (studentId, year) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const student = yield this.getStudent(studentId);
+                const coursesTaken = yield student.Group.filter((course) => {
+                    var _a, _b;
+                    return ((_a = course.studentsCourses) === null || _a === void 0 ? void 0 : _a.grade) !== null &&
+                        ((_b = course.studentsCourses) === null || _b === void 0 ? void 0 : _b.grade) !== "FF";
+                }).map((course) => {
+                    return course === null || course === void 0 ? void 0 : course.Course.code;
+                });
+                // get offered courses
+                const allGroup = yield Group.findAll({
+                    where: {
+                        year: year
+                    },
+                    include: [
+                        {
+                            model: Courses,
+                            as: "Course"
+                        }
+                    ]
+                });
+                const CoursesOffered = yield (allGroup === null || allGroup === void 0 ? void 0 : allGroup.map((course) => course.Course));
+                CoursesOffered.sort((a, b) => parseFloat(a.semester) - parseFloat(b.semester));
+                //remove repeated courses
+                const filtered = CoursesOffered.filter((v, i, a) => a.findIndex((t) => (t.id === v.id)) === i);
+                //remove courses which are taken
+                const remove = yield filtered.filter((course) => !coursesTaken.includes(course.code));
+                //check if prerequisites is done
+                const prerequisites = yield remove.filter((course) => coursesTaken.includes(course.prerequisites) || course.prerequisites === null);
+                const totalcredit = yield prerequisites.map((item) => parseInt(item.credit)).reduce((prev, next) => prev + next);
+                let credits = 0;
+                const automation = yield prerequisites.map((courses) => {
+                    if (totalcredit < 21) {
+                        return courses;
+                    }
+                    else {
+                        credits = credits + courses.credit;
+                        if (credits < 21 && credits < 19) {
+                            return courses;
+                        }
+                    }
+                });
+                const removeNull = yield automation.filter((Course) => Course !== undefined);
+                return removeNull;
             }
             catch (error) {
                 throw error;

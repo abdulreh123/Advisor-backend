@@ -41,6 +41,10 @@ const resources = [
     router: Routes.roomRoutes,
   },
   {
+    endpoint: "/api/payments",
+    router: Routes.paymentRoutes,
+  },
+  {
     endpoint: "/api",
     router: (req: any, res: any) => {
       res.status(200).json("Advisor REST API");

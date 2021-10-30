@@ -37,6 +37,14 @@ const resources = [
         router: Routes.groupRoutes,
     },
     {
+        endpoint: "/api/buildings",
+        router: Routes.buildingRoutes,
+    },
+    {
+        endpoint: "/api/rooms",
+        router: Routes.roomRoutes,
+    },
+    {
         endpoint: "/api",
         router: (req, res) => {
             res.status(200).json("Advisor REST API");

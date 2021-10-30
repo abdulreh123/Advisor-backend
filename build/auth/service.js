@@ -210,7 +210,7 @@ class AuthService {
                 const result = {
                     token,
                     user: {
-                        userId: ((_k = users.Advisor) === null || _k === void 0 ? void 0 : _k.userId) || ((_l = users.Student) === null || _l === void 0 ? void 0 : _l.userId) || ((_m = users.chairman) === null || _m === void 0 ? void 0 : _m.userId) || users.userSuperAdmin,
+                        userId: ((_k = users.Advisor) === null || _k === void 0 ? void 0 : _k.id) || ((_l = users.Student) === null || _l === void 0 ? void 0 : _l.userId) || ((_m = users.chairman) === null || _m === void 0 ? void 0 : _m.userId) || users.userSuperAdmin,
                         username: users.userName,
                         name: ((_o = users.Advisor) === null || _o === void 0 ? void 0 : _o.name) || ((_p = users.Student) === null || _p === void 0 ? void 0 : _p.name) || ((_q = users.chairman) === null || _q === void 0 ? void 0 : _q.name) || users.name,
                         surname: ((_r = users.Advisor) === null || _r === void 0 ? void 0 : _r.surname) || ((_s = users.Student) === null || _s === void 0 ? void 0 : _s.surname) || ((_t = users.chairman) === null || _t === void 0 ? void 0 : _t.surname) || users.userSuperAdmin,

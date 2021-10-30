@@ -59,6 +59,45 @@ class AdvisorController extends Service_1.default {
          * @param req Request
          * @param res Response
          */
+        this.automate = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { studentId } = req.params;
+                const { year } = req.query;
+                const advisors = yield this.AutomateSelection(studentId, year);
+                res.status(200).json({ success: true, data: advisors });
+            }
+            catch (error) {
+                res.status(400).json({
+                    success: false,
+                    data: [],
+                    message: error.message,
+                });
+            }
+        });
+        /**
+         * @desc  Get single department
+         * @param req Request
+         * @param res Response
+         */
+        this.findByAdvisor = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { advisorId } = req.params;
+                const advisors = yield this.getStudentByAdvisor(advisorId);
+                res.status(200).json({ success: true, data: advisors });
+            }
+            catch (error) {
+                res.status(400).json({
+                    success: false,
+                    data: [],
+                    message: error.message,
+                });
+            }
+        });
+        /**
+         * @desc  Get single department
+         * @param req Request
+         * @param res Response
+         */
         this.studentTranscript = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const { studentId } = req.params;

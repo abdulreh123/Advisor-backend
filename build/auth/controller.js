@@ -65,7 +65,6 @@ class authControllers {
                 if (!userId)
                     throw new Error("Please login");
                 const user = yield AuthService.verifyUser(userId);
-                console.log(user);
                 res.status(200).json({ success: true, data: user });
             }
             catch (error) {

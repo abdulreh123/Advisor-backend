@@ -22,6 +22,18 @@ const StudentModel = sequelize.define("students", {
         type: Sequelize.STRING,
         allowNull: false,
     },
+    passportNumber: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
+    nationality: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
+    departmentId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+    },
     advisorId: {
         type: Sequelize.INTEGER,
     },

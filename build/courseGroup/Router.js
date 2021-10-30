@@ -18,6 +18,8 @@ const GourseControllers = new controllers_1.default();
 const destroyDepartment = ["super_admin"];
 router.get("/", GourseControllers.findAll);
 router.get("/:groupId", GourseControllers.findOne);
+router.get("/department/:departmentId", GourseControllers.findByDepartment);
+router.get("/lecturer/:lecturerId", GourseControllers.findByLecturer);
 router.put("/:groupId", GourseControllers.update);
 router.post("/create", GourseControllers.create);
 router.delete("/:groupId", GourseControllers.delete);

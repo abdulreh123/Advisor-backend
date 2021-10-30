@@ -9,6 +9,7 @@ const user = require("../auth/model");
 const StudentCourses = require("../student/StudentCourses.model");
 const Buildings = require("../building/model");
 const Rooms = require("../rooms/model");
+const Payments = require("../payments/Model");
 
 
 Department.hasMany(Courses, {
@@ -17,6 +18,23 @@ Department.hasMany(Courses, {
     hooks: true,
     foreignKey: "departmentId",
     sourceKey: "id",
+});
+Courses.belongsTo(Department, {
+  as: "Department",
+  foreignKey: "departmentId",
+  sourceKey: "id",
+});
+Student.hasMany(Payments, {
+    as: "payments",
+    onDelete: "CASCADE",
+    hooks: true,
+    foreignKey: "studentId",
+    sourceKey: "userId",
+});
+Payments.belongsTo(Student, {
+  as: "Student",
+  foreignKey: "studentId",
+  sourceKey: "userId",
 });
 chairman.hasOne(Department, {
     as: "Department",
@@ -55,11 +73,6 @@ user.belongsTo(Advisor, {
 user.belongsTo(Student, {
   as: "Student",
   foreignKey: "userStudent",
-  sourceKey: "id",
-});
-Courses.belongsTo(Department, {
-  as: "Department",
-  foreignKey: "departmentId",
   sourceKey: "id",
 });
 Advisor.hasMany(Student, {

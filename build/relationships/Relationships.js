@@ -28,15 +28,15 @@ Department.belongsTo(chairman, {
     foreignKey: "chairmanId",
     sourceKey: "id",
 });
-Advisor.hasOne(Group, {
-    as: "Lecturer",
+Advisor.hasMany(Group, {
+    as: "Group",
     onDelete: "CASCADE",
     foreignKey: "lecturerId",
     hooks: true,
     sourceKey: "id",
 });
 Group.belongsTo(Advisor, {
-    as: "Group",
+    as: "Advisor",
     foreignKey: "lecturerId",
     sourceKey: "id",
 });
@@ -101,15 +101,27 @@ Group.belongsToMany(Student, {
     through: StudentCourses,
     as: "Students",
 });
-Buildings.hasOne(Rooms, {
-    as: "Building",
+Buildings.hasMany(Rooms, {
+    as: "Rooms",
     onDelete: "CASCADE",
     hooks: true,
     foreignKey: "buildingId",
     sourceKey: "id",
 });
 Rooms.belongsTo(Buildings, {
-    as: "Rooms",
+    as: "Buildings",
     foreignKey: "buildingId",
+    sourceKey: "id",
+});
+Rooms.hasMany(Group, {
+    as: "Group",
+    onDelete: "CASCADE",
+    hooks: true,
+    foreignKey: "room",
+    sourceKey: "id",
+});
+Group.belongsTo(Rooms, {
+    as: "Rooms",
+    foreignKey: "room",
     sourceKey: "id",
 });
