@@ -2,7 +2,7 @@ import Sequelize = require("sequelize");
 const sequelize = require("../helpers/Connection");
 
 const StudentPaymentmodel = sequelize.define(
-  "studentpayments",
+  "studentPayments",
   {
     id: {
       type: Sequelize.INTEGER,
@@ -32,7 +32,7 @@ const StudentPaymentmodel = sequelize.define(
     },
   },
   {
-    tableName: "studentpayments",
+    tableName: "studentPayments",
     deletedAt: "deletedAt",
     paranoid: true,
     timestamps: true,
