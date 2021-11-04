@@ -70,13 +70,13 @@ export default class DepartmentService {
       });
       let transcript: any = []
       const groups = result.Group
-      const academicYears = await groups.map((group: any) => group.studentsCourses.academicYear)
+      const academicYears = await groups.map((group: any) => group.studentscourses.academicYear)
       const uniqueArray = academicYears.filter(function (item: any, pos: any) {
         return academicYears.indexOf(item) == pos;
       })
     await Promise.all(  await uniqueArray.map(async (group: any) => {
-        const year = await groups.filter((year: any) => year.studentsCourses.academicYear === group)
-        const totalcrPts =await year.map((item:any) => parseInt(item.studentsCourses.CrPts)).reduce((prev:number, next:number) => prev + next);
+        const year = await groups.filter((year: any) => year.studentscourses.academicYear === group)
+        const totalcrPts =await year.map((item:any) => parseInt(item.studentscourses.CrPts)).reduce((prev:number, next:number) => prev + next);
         const totalcredit =await year.map((item:any) => parseInt(item.Course.credit)).reduce((prev:number, next:number) => prev + next);
         const data = {
           year: group,

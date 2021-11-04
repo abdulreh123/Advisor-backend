@@ -1,4 +1,4 @@
-const Student = require("../student/model");
+const Students = require("../student/model");
 const Payments = require("./Model");
 const { Op,Sequelize } = require("sequelize");
 export default class PaymentsService {
@@ -17,12 +17,12 @@ export default class PaymentsService {
   getPayments = async (): Promise<any> => {
     try {
       const payments = await Payments.findAll({
-        include: [
-          {
-            model: Student,
-            as: "Student"
-          },
-        ]
+        // include: [
+        //   {
+        //     model: Students,
+        //     as: "Student"
+        //   },
+        // ]
       });
       return payments;
     } catch (error) {
@@ -33,12 +33,12 @@ export default class PaymentsService {
   getPayment = async (paymentId: number): Promise<any> => {
     try {
       const result = await Payments.findByPk(paymentId, {
-        include: [
-          {
-            model: Student,
-            as: "Student"
-          },
-        ]
+        // include: [
+        //   {
+        //     model: Students,
+        //     as: "Student"
+        //   },
+        // ]
       });
       return result;
     } catch (error) {
@@ -51,12 +51,12 @@ export default class PaymentsService {
         where:{
           StudentId:StudentId
         },
-        include: [
-          {
-            model: Student,
-            as: "Student"
-          },
-        ]
+        // include: [
+        //   {
+        //     model: Student,
+        //     as: "Student"
+        //   },
+        // ]
       });
       return result;
     } catch (error) {
