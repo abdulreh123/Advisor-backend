@@ -39,6 +39,7 @@ const Studentmodel = sequelize.define(
         type: Sequelize.INTEGER,
       },
   },
+  
   {
     tableName: "students",
     deletedAt: "deletedAt",
