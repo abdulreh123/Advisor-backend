@@ -36,7 +36,7 @@ export default class App {
         saveUninitialized: false,
         store: new SequelizeStore({
           db: connectDb,
-          table: 'Session',
+          table: 'session',
           expiration: (1) * 60 * 60 * 1000 , // Expire after 90 days (3 months)
         }),
         name: "sis"
