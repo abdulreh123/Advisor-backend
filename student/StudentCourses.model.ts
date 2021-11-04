@@ -2,7 +2,7 @@ import Sequelize = require("sequelize");
 const sequelize = require("../helpers/Connection");
 
 const StudentCoursesmodel = sequelize.define(
-  "studentsCourses",
+  "studentscourses",
   {
     id: {
       type: Sequelize.INTEGER,
