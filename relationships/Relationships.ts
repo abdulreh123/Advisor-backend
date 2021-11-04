@@ -10,6 +10,7 @@ const StudentCourses = require("../student/StudentCourses.model");
 const Buildings = require("../building/model");
 const Rooms = require("../rooms/model");
 const Payments = require("../payments/model");
+const Session = require("../helpers/session");
 
 
 Department.hasMany(Courses, {
