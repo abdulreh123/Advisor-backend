@@ -13,7 +13,7 @@ const Session = sequelize.define('Session', {
     }
 },
 {
-    tableName: 'sessions'
+    tableName: 'Sessions'
 });
 
 module.exports = Session;
