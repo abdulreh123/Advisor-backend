@@ -44,7 +44,7 @@ const Coursesmodel = sequelize.define(
     }
   },
   {
-    tableName: "courseGroup",
+    tableName: "coursegroup",
     deletedAt: "deletedAt",
     paranoid: true,
     timestamps: true,
