@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
-const AdvisorModel = require("../advisor/model");
-const Student = require("./Model");
+const Advisormodel = require("../advisor/model");
+const Student = require("./model");
 const StudentCourses = require("./StudentCourses.model");
 const Courses = require("../courses/model");
 const Group = require("../courseGroup/model");
@@ -36,7 +36,7 @@ export default class DepartmentService {
       const departments = await Student.findAll({
         include: [
           {
-            model: AdvisorModel,
+            model: Advisormodel,
             as: "advisor"
           },
         ]
@@ -55,7 +55,7 @@ export default class DepartmentService {
         },
         include: [
           {
-            model: AdvisorModel,
+            model: Advisormodel,
             as: "advisor"
           },
           {
@@ -97,7 +97,7 @@ export default class DepartmentService {
       const result = await Student.findByPk(studentId, {
         include: [
           {
-            model: AdvisorModel,
+            model: Advisormodel,
             as: "advisor"
           },
           {
@@ -123,7 +123,7 @@ export default class DepartmentService {
         },
         include: [
           {
-            model: AdvisorModel,
+            model: Advisormodel,
             as: "advisor"
           },
           {

@@ -1,7 +1,7 @@
 import Sequelize = require("sequelize");
 const sequelize = require("../helpers/Connection");
 
-const RoomModel = sequelize.define(
+const Roommodel = sequelize.define(
   "rooms",
   {
     id: {
@@ -33,4 +33,4 @@ const RoomModel = sequelize.define(
   }
 );
 
-module.exports = RoomModel;
+module.exports = Roommodel;

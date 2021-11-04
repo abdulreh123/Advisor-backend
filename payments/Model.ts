@@ -1,7 +1,7 @@
 import Sequelize = require("sequelize");
 const sequelize = require("../helpers/Connection");
 
-const StudentPaymentModel = sequelize.define(
+const StudentPaymentmodel = sequelize.define(
   "studentPayments",
   {
     id: {
@@ -39,4 +39,4 @@ const StudentPaymentModel = sequelize.define(
   }
 );
 
-module.exports = StudentPaymentModel;
+module.exports = StudentPaymentmodel;

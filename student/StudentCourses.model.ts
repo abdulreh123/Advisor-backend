@@ -1,7 +1,7 @@
 import Sequelize = require("sequelize");
 const sequelize = require("../helpers/Connection");
 
-const StudentCoursesModel = sequelize.define(
+const StudentCoursesmodel = sequelize.define(
   "studentsCourses",
   {
     id: {
@@ -25,4 +25,4 @@ const StudentCoursesModel = sequelize.define(
   },
 );
 
-module.exports = StudentCoursesModel;
+module.exports = StudentCoursesmodel;

@@ -1,7 +1,7 @@
 import Sequelize = require("sequelize");
 const sequelize = require("../helpers/Connection");
 
-const BuildingModel = sequelize.define(
+const Buildingmodel = sequelize.define(
   "buildings",
   {
     id: {
@@ -29,4 +29,4 @@ const BuildingModel = sequelize.define(
   }
 );
 
-module.exports = BuildingModel;
+module.exports = Buildingmodel;

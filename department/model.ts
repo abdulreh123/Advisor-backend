@@ -1,7 +1,7 @@
 import Sequelize = require("sequelize");
 const sequelize = require("../helpers/Connection");
 
-const DepartmentModel = sequelize.define(
+const Departmentmodel = sequelize.define(
   "departments",
   {
     id: {
@@ -28,4 +28,4 @@ const DepartmentModel = sequelize.define(
   }
 );
 
-module.exports = DepartmentModel;
+module.exports = Departmentmodel;

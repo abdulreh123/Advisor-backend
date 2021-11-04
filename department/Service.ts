@@ -1,5 +1,5 @@
 
-const DepartmentModel = require("./model");
+const Departmentmodel = require("./model");
 const Chairman = require("../chairman/model");
 const Courses = require("../courses/model");
 
@@ -8,7 +8,7 @@ export default class DepartmentService {
   //  Create Department
   createDepartment = async (data: any): Promise<any> => {
     try {
-      const department = await DepartmentModel.create({ ...data });
+      const department = await Departmentmodel.create({ ...data });
       return department;
     } catch (error) {
       throw error;
@@ -18,7 +18,7 @@ export default class DepartmentService {
   //  Get Departments
   getDepartments = async (): Promise<any> => {
     try {
-      const departments = await DepartmentModel.findAll({ 
+      const departments = await Departmentmodel.findAll({ 
         include:[
           {
             model:Chairman,
@@ -35,7 +35,7 @@ export default class DepartmentService {
   //  Get Department
   getDepartment = async (departmentId: number): Promise<any> => {
     try {
-      const result = await DepartmentModel.findByPk(departmentId, {
+      const result = await Departmentmodel.findByPk(departmentId, {
         include:[
           {
             model:Courses,
@@ -56,7 +56,7 @@ export default class DepartmentService {
   ): Promise<any> => {
     try {
       const department = await this.getDepartment(departmentId);
-      await DepartmentModel.update(
+      await Departmentmodel.update(
         { ...data },
         { where: { id: departmentId } }
       );
@@ -70,7 +70,7 @@ export default class DepartmentService {
     departmentId: number,
   ): Promise<any> => {
     try {
-      const department = await DepartmentModel.findOne({
+      const department = await Departmentmodel.findOne({
         where: {
           id: departmentId,
         },

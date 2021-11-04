@@ -1,6 +1,6 @@
 
-const AdvisorModel = require("../advisor/model");
-const Student = require("../student/Model");
+const Advisormodel = require("../advisor/model");
+const Student = require("../student/model");
 const Group = require("../courseGroup/model");
 
 export default class DepartmentService {
@@ -8,7 +8,7 @@ export default class DepartmentService {
   //  Create Advisor
   createAdvisor = async (data: any): Promise<any> => {
     try {
-      const department = await AdvisorModel.create({ ...data });
+      const department = await Advisormodel.create({ ...data });
       return department;
     } catch (error) {
       throw error;
@@ -18,7 +18,7 @@ export default class DepartmentService {
   //  Get Advisor
   getAdvisors = async (): Promise<any> => {
     try {
-      const departments = await AdvisorModel.findAll({});
+      const departments = await Advisormodel.findAll({});
       return departments;
     } catch (error) {
       throw error;
@@ -27,7 +27,7 @@ export default class DepartmentService {
   //  Get Advisor
   getAdvisor = async (advisorId: number): Promise<any> => {
     try {
-      const result = await AdvisorModel.findByPk(advisorId, {
+      const result = await Advisormodel.findByPk(advisorId, {
         include: [
           {
             model: Student,
@@ -50,7 +50,7 @@ export default class DepartmentService {
     data: any,
   ): Promise<any> => {
     try {
-      await AdvisorModel.update(
+      await Advisormodel.update(
         { ...data },
         { where: { id: advisorId } }
       );
@@ -65,7 +65,7 @@ export default class DepartmentService {
     advisorId: number,
   ): Promise<any> => {
     try {
-      const department = await AdvisorModel.findOne({
+      const department = await Advisormodel.findOne({
         where: {
           id: advisorId,
         },

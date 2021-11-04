@@ -1,7 +1,7 @@
 
 const Group = require("./model");
-const Student = require("../student/Model");
-const Advisor = require("../advisor/Model");
+const Student = require("../student/model");
+const Advisor = require("../advisor/model");
 const Course = require("../courses/model");
 
 export default class GroupService {

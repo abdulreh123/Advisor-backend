@@ -3,13 +3,13 @@ const Advisor = require("../advisor/model");
 const Courses = require("../courses/model");
 const Department = require("../department/model");
 const Group = require("../courseGroup/model");
-const Student = require("../student/Model");
+const Student = require("../student/model");
 const chairman = require("../chairman/model");
 const user = require("../auth/model");
 const StudentCourses = require("../student/StudentCourses.model");
 const Buildings = require("../building/model");
 const Rooms = require("../rooms/model");
-const Payments = require("../payments/Model");
+const Payments = require("../payments/model");
 
 
 Department.hasMany(Courses, {
