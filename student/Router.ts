@@ -43,6 +43,14 @@ router.put(
   StudentControllers.gradeUpdate
 );
 router.put(
+  "/approve/:studentId/:courseId",
+  StudentControllers.courseApproval
+);
+router.get(
+  "/get-approve/:studentId",
+  StudentControllers.getNotApproval
+);
+router.put(
   "/add/remove/:studentId",
   StudentControllers.courseUpdate
 );

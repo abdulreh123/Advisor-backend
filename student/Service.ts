@@ -76,11 +76,12 @@ export default class DepartmentService {
       })
     await Promise.all(  await uniqueArray.map(async (group: any) => {
         const year = await groups.filter((year: any) => year.studentscourses.academicYear === group)
-        const totalcrPts =await year.map((item:any) => parseInt(item.studentscourses.CrPts)).reduce((prev:number, next:number) => prev + next);
-        const totalcredit =await year.map((item:any) => parseInt(item.Course.credit)).reduce((prev:number, next:number) => prev + next);
+        const approved =year.filter((course:any)=>course.studentscourses.approvedBy!==null)
+        const totalcrPts =await approved.map((item:any) => parseInt(item.studentscourses.CrPts)).reduce((prev:number, next:number) => prev + next);
+        const totalcredit =await approved.map((item:any) => parseInt(item.Course.credit)).reduce((prev:number, next:number) => prev + next);
         const data = {
           year: group,
-          courses: year,
+          courses: approved,
           totalcrPts:totalcrPts,
           totalcredit:totalcredit,
           gpa:totalcrPts/totalcredit
@@ -193,6 +194,8 @@ export default class DepartmentService {
   addRemoveCourse = async (
     studentId: number,
     data: any,
+    status:string,
+    name:string
   ) => {
     try {
       let error: string | undefined;
@@ -203,17 +206,25 @@ export default class DepartmentService {
           const prerequisites = group?.Course?.prerequisites
           if (prerequisites) {
             const allCode = student?.Group.map((group:any) => {
-              if (group?.studentsCourses.grade) {
+              if (group?.studentscourses.grade && group?.studentscourses.grade!=='FF') {
                 return (group?.Course?.code)
               }
             })
             if (allCode.includes(prerequisites)) {
-              await StudentCourses.create({ studentId: studentId, courseGroupId: course, academicYear: data?.year })
+              if(status==='Student'){
+                await StudentCourses.create({ studentId: studentId, courseGroupId: course, academicYear: data?.year })
+              }else{
+                await StudentCourses.create({ studentId: studentId, courseGroupId: course, academicYear: data?.year,approvedBy:name })
+              }
             } else {
               error = `student did not take the required prerequisites for ${group.Course.name}`
             }
           } else {
-            await StudentCourses.create({ studentId: studentId, courseGroupId: course, academicYear: data.year })
+            if(status==='Student'){
+              await StudentCourses.create({ studentId: studentId, courseGroupId: course, academicYear: data?.year })
+            }else{
+              await StudentCourses.create({ studentId: studentId, courseGroupId: course, academicYear: data?.year,approvedBy:name })
+            }
           }
         }))
       }
@@ -245,7 +256,50 @@ export default class DepartmentService {
           grade: data.grade,
           CrPts: points
         },
-        { where: { studentId: studentId, courseId: courseId } }
+        { where: { studentId: studentId, courseGroupId: courseId } }
+      );
+      const student = await this.getStudent(studentId);
+      return student;
+    } catch (error) {
+      throw error;
+    }
+  };
+  getCourseApproval = async (
+    studentId: number,
+  ): Promise<any> => {
+    try {
+      const result = await Student.findOne({
+        where:{
+            userId:studentId,
+        },
+        include: [
+          {
+            model: Group,
+            as: "Group",
+            include: [{
+              model: Courses,
+              as: "Course",
+            }],
+          }
+        ]
+      })
+      const group =result.Group
+      const notAprroved =group.filter((course:any)=> course.studentscourses.approvedBy===null)
+      return notAprroved;
+    } catch (error) {
+      throw error;
+    }
+  };
+  approveCourse = async (
+    studentId: number,
+    courseId: number,
+    name: string
+  ): Promise<any> => {
+    try {
+      await StudentCourses.update(
+        {approvedBy:name
+        },
+        { where: { studentId: studentId, courseGroupId: courseId,approvedBy:null } }
       );
       const student = await this.getStudent(studentId);
       return student;
@@ -259,8 +313,8 @@ export default class DepartmentService {
   ): Promise<any> => {
     try {
       const student = await this.getStudent(studentId);
-      const coursesTaken =await student.Group.filter((course:any)=>course.studentsCourses?.grade!==null && 
-      course.studentsCourses?.grade!=="FF").map((course:any)=>{
+      const coursesTaken =await student.Group.filter((course:any)=>course.studentscourses?.grade!==null && 
+      course.studentscourses?.grade!=="FF").map((course:any)=>{
        return course?.Course.code
       })
       // get offered courses

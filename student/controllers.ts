@@ -160,8 +160,43 @@ export default class AdvisorController extends StudentService{
     try {
       const { studentId } = req.params;
       const body = req.body;
-      const advisors = await this.addRemoveCourse(studentId, body);
+      const status = req.session?.user?.status;
+      const name = req.session?.user?.name;
+      const advisors = await this.addRemoveCourse(studentId, body,status,name);
       res.status(200).json({ success: true, data: advisors,message:` course ${body.type}!` });
+    } catch (error) {
+      res
+        .status(400)
+        .json({ success: false, data: [], message: error.message });
+    }
+  };
+  /**
+   * @desc  Update Department
+   * @param req Request
+   * @param res Response
+   */
+ courseApproval= async (req: any, res: any) => {
+    try {
+      const { studentId,courseId } = req.params;
+      const name = req.session?.user?.name;
+      const advisors = await this.approveCourse(studentId,courseId, name);
+      res.status(200).json({ success: true, data: advisors,message:` course Approved` });
+    } catch (error) {
+      res
+        .status(400)
+        .json({ success: false, data: [], message: error.message });
+    }
+  };
+  /**
+   * @desc  Update Department
+   * @param req Request
+   * @param res Response
+   */
+ getNotApproval= async (req: any, res: any) => {
+    try {
+      const { studentId } = req.params;
+      const advisors = await this.getCourseApproval(studentId);
+      res.status(200).json({ success: true, data: advisors});
     } catch (error) {
       res
         .status(400)

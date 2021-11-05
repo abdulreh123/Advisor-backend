@@ -88,6 +88,7 @@ export default class AuthService {
         token,
         user: {
           userId: users.Advisor?.userId || users.Student?.userId || users.chairman?.userId || users.userSuperAdmin,
+          Id: users.Advisor?.id || users.Student?.id || users.chairman?.id || users.userSuperAdmin,
           username: users.userName,
           name: users.Advisor?.name || users.Student?.name || users.chairman?.name || users.name,
           surname: users.Advisor?.surname || users.Student?.surname || users.chairman?.surname || users.userSuperAdmin,
@@ -184,6 +185,7 @@ export default class AuthService {
         token,
         user: {
           userId: users.Advisor?.id || users.Student?.userId || users.chairman?.userId || users.userSuperAdmin,
+          Id: users.Advisor?.id || users.Student?.id || users.chairman?.id || users.userSuperAdmin,
           username: users.userName,
           name: users.Advisor?.name || users.Student?.name || users.chairman?.name || users.name,
           surname: users.Advisor?.surname || users.Student?.surname || users.chairman?.surname || users.userSuperAdmin,
