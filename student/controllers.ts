@@ -44,6 +44,38 @@ export default class AdvisorController extends StudentService{
    * @param req Request
    * @param res Response
    */
+  studentStats = async (req: any, res: any) => {
+    try {
+      const { studentId,departmentId } = req.params;
+      const advisors = await this.getStudentStats(studentId,departmentId);
+      res.status(200).json({ success: true, data: advisors });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        data: [],
+        message: error.message,
+      });
+    }
+  };
+  timeTable = async (req: any, res: any) => {
+    try {
+      const { studentId } = req.params;
+      const { year } = req.query;
+      const advisors = await this.getTimeTable(studentId,year);
+      res.status(200).json({ success: true, data: advisors });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        data: [],
+        message: error.message,
+      });
+    }
+  };
+  /**
+   * @desc  Get single department
+   * @param req Request
+   * @param res Response
+   */
   automate = async (req: any, res: any) => {
     try {
       const { studentId } = req.params;

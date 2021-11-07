@@ -2,7 +2,7 @@ import Sequelize = require("sequelize");
 const sequelize = require("../helpers/Connection");
 
 const Coursesmodel = sequelize.define(
-  "courseGroup",
+  "courserooms",
   {
     id: {
       type: Sequelize.INTEGER,
@@ -10,25 +10,29 @@ const Coursesmodel = sequelize.define(
       allowNull: false,
       primaryKey: true,
     },
-    name:{
-        type:Sequelize.STRING,
+    day:{
+        type:Sequelize.DataTypes.ENUM("monday", "tuesday", "wednesday","thursday","friday","saturday"),
         allowNull: false,
     },
-    lecturerId:{
+    timeStart:{
+        type:Sequelize.TIME,
+        allowNull: false,
+    },
+    timeEnd:{
+        type:Sequelize.TIME,
+        allowNull: false,
+    },
+    roomId:{
         type:Sequelize.INTEGER,
         allowNull: false,
     },
-    courseId:{
+    groupId:{
         type:Sequelize.INTEGER,
         allowNull: false,
     },
-    year:{
-        type:Sequelize.STRING,
-        allowNull: false,
-    }
   },
   {
-    tableName: "coursegroup",
+    tableName: "courserooms",
     deletedAt: "deletedAt",
     paranoid: true,
     timestamps: true,

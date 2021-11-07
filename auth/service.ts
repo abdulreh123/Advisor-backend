@@ -3,6 +3,7 @@ const user = require("./model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Student = require("../student/model");
+const dayjs = require('dayjs')
 const chairman = require("../chairman/model");
 const Advisor = require("../advisor/model");
 const Department = require("../department/model");
@@ -13,6 +14,22 @@ export default class AuthService {
   * Authenticate user via form input
   * @param data { companyEmail:string, password:string }
   */
+ 
+   private getAcademicYear = async() => {
+    let year: string =''
+    const month = dayjs().month()
+    const currentyear = dayjs().year()
+    if (month >= 1 && month <= 5) {
+     year =`${currentyear-1}-${currentyear} - Spring`
+    }
+    if (month > 5 && month <= 8) {
+     year =`${currentyear-1}-${currentyear} - Summer`
+    }
+    if (month > 8 || month < 1) {
+     year =`${currentyear}-${currentyear + 1} - Fall`
+    }
+    return year
+  }
   async loginViaForm(data: any) {
     let status
     try {
@@ -190,6 +207,7 @@ export default class AuthService {
           name: users.Advisor?.name || users.Student?.name || users.chairman?.name || users.name,
           surname: users.Advisor?.surname || users.Student?.surname || users.chairman?.surname || users.userSuperAdmin,
           department: users.Advisor?.Department || users.Student?.advisor.Department || users.chairman?.Department || users.userSuperAdmin,
+          year:await this.getAcademicYear(),
           status: status,
         },
       };

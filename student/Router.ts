@@ -22,6 +22,14 @@ router.get(
   StudentControllers.findOne
 );
 router.get(
+  "/stats/:studentId/:departmentId",
+  StudentControllers.studentStats
+);
+router.get(
+  "/time-table/:studentId",
+  StudentControllers.timeTable
+);
+router.get(
   "/automate/:studentId",
   StudentControllers.automate
 );

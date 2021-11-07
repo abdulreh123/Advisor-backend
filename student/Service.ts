@@ -3,14 +3,16 @@ const Advisormodel = require("../advisor/model");
 const Student = require("./model");
 const StudentCourses = require("./StudentCourses.model");
 const Courses = require("../courses/model");
+const CourseRooms = require("../rooms/courseRooms.model");
 const Group = require("../courseGroup/model");
-import { any } from "sequelize/types/lib/operators";
+import { DataTypes } from "sequelize/types";
 import GroupService from "../courseGroup/Service";
 const GroupServices = new GroupService();
 const user = require("../auth/model")
-const { Op,Sequelize } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 export default class DepartmentService {
   constructor() { }
+  public WEEK_DAYS= ["monday", "tuesday", "wednesday","thursday","friday","saturday"]
   private hashPassword = async (password: string): Promise<string> => {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
@@ -50,8 +52,8 @@ export default class DepartmentService {
   getTranscript = async (studentId: number): Promise<any> => {
     try {
       const result = await Student.findOne({
-        where:{
-          userId:studentId
+        where: {
+          userId: studentId
         },
         include: [
           {
@@ -74,17 +76,17 @@ export default class DepartmentService {
       const uniqueArray = academicYears.filter(function (item: any, pos: any) {
         return academicYears.indexOf(item) == pos;
       })
-    await Promise.all(  await uniqueArray.map(async (group: any) => {
+      await Promise.all(await uniqueArray.map(async (group: any) => {
         const year = await groups.filter((year: any) => year.studentscourses.academicYear === group)
-        const approved =year.filter((course:any)=>course.studentscourses.approvedBy!==null)
-        const totalcrPts =await approved.map((item:any) => parseInt(item.studentscourses.CrPts)).reduce((prev:number, next:number) => prev + next);
-        const totalcredit =await approved.map((item:any) => parseInt(item.Course.credit)).reduce((prev:number, next:number) => prev + next);
+        const approved = year.filter((course: any) => course.studentscourses.approvedBy !== null)
+        const totalcrPts = await approved.map((item: any) => parseInt(item.studentscourses.CrPts)).reduce((prev: number, next: number) => prev + next);
+        const totalcredit = await approved.map((item: any) => parseInt(item.Course.credit)).reduce((prev: number, next: number) => prev + next);
         const data = {
           year: group,
           courses: approved,
-          totalcrPts:totalcrPts,
-          totalcredit:totalcredit,
-          gpa:totalcrPts/totalcredit
+          totalcrPts: totalcrPts,
+          totalcredit: totalcredit,
+          gpa: totalcrPts / totalcredit
         }
         transcript.push(data)
       }))
@@ -116,11 +118,95 @@ export default class DepartmentService {
       throw error;
     }
   };
+  getTimeTable = async (studentId: number,year:string): Promise<any> => {
+    try {
+      const result = await Student.findByPk(studentId, {
+        include: [
+          {
+            model: Group,
+            as: "Group",
+            where:{year:year},
+            include: [{
+              model: CourseRooms,
+              as: "CourseRooms",
+            }]
+          }
+        ]
+      });
+      const groups = await result.Group
+      const timetable = await Promise.all(this.WEEK_DAYS.map(async(days:string)=>{
+        let weekDay:any=[]
+       const data = await groups.filter((f:any) =>
+        f.CourseRooms.some((o:any) => days?.includes(o.day))
+       )
+       if(data.length>0){
+         const x=await Promise.all(await data.map(async(day:any)=> {
+         const table= await day.CourseRooms.filter((dayt:any)=>dayt.day===days)
+         const week=await table.map((time:any)=>{
+           return {
+            name:day.name,
+            type: "custom",
+            startTime: `2018-02-24T${time.timeStart}`,
+            endTime: `2018-02-24T${time.timeEnd}`,
+          }
+         })
+         return week
+         } ))
+         
+         weekDay.push(x)
+       }
+       const result ={
+         [`${days}`]:weekDay
+       }
+       return result
+      }))
+
+      return timetable;
+    } catch (error) {
+      throw error;
+    }
+  };
+  getStudentStats = async (studentId: number, departmentId: number): Promise<any> => {
+    try {
+      const result = await Student.findOne({
+        where: {
+          id: studentId
+        },
+        include: [
+          {
+            model: Group,
+            as: "Group",
+            include: [{
+              model: Courses,
+              as: "Course",
+            }]
+          }
+        ]
+      });
+      const allCourses = await Courses.findAll({
+        where: {
+          departmentId: departmentId
+        }
+      })
+      const stats = await result?.Group.filter((course: any) => course.studentscourses.grade !== null && course.studentscourses.grade !== 'FF')
+      const totalDepartmentcredit = await allCourses.map((item: any) => parseInt(item.credit)).reduce((prev: number, next: number) => prev + next);
+      const totalcredit = await stats.map((item: any) => parseInt(item.Course.credit)).reduce((prev: number, next: number) => prev + next);
+      const data = {
+        courses: allCourses.length,
+        coursesTaken: stats.length,
+        credit: totalDepartmentcredit,
+        creditTaken: totalcredit
+      }
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  };
   getStudentByAdvisor = async (advisorId: number): Promise<any> => {
     try {
       const result = await Student.findAll({
-        where:{
-          advisorId:advisorId
+        where: {
+          advisorId: advisorId
         },
         include: [
           {
@@ -194,8 +280,8 @@ export default class DepartmentService {
   addRemoveCourse = async (
     studentId: number,
     data: any,
-    status:string,
-    name:string
+    status: string,
+    name: string
   ) => {
     try {
       let error: string | undefined;
@@ -205,25 +291,25 @@ export default class DepartmentService {
           const group = await GroupServices.getGroup(course)
           const prerequisites = group?.Course?.prerequisites
           if (prerequisites) {
-            const allCode = student?.Group.map((group:any) => {
-              if (group?.studentscourses.grade && group?.studentscourses.grade!=='FF') {
+            const allCode = student?.Group.map((group: any) => {
+              if (group?.studentscourses.grade && group?.studentscourses.grade !== 'FF') {
                 return (group?.Course?.code)
               }
             })
             if (allCode.includes(prerequisites)) {
-              if(status==='Student'){
+              if (status === 'Student') {
                 await StudentCourses.create({ studentId: studentId, courseGroupId: course, academicYear: data?.year })
-              }else{
-                await StudentCourses.create({ studentId: studentId, courseGroupId: course, academicYear: data?.year,approvedBy:name })
+              } else {
+                await StudentCourses.create({ studentId: studentId, courseGroupId: course, academicYear: data?.year, approvedBy: name })
               }
             } else {
               error = `student did not take the required prerequisites for ${group.Course.name}`
             }
           } else {
-            if(status==='Student'){
+            if (status === 'Student') {
               await StudentCourses.create({ studentId: studentId, courseGroupId: course, academicYear: data?.year })
-            }else{
-              await StudentCourses.create({ studentId: studentId, courseGroupId: course, academicYear: data?.year,approvedBy:name })
+            } else {
+              await StudentCourses.create({ studentId: studentId, courseGroupId: course, academicYear: data?.year, approvedBy: name })
             }
           }
         }))
@@ -269,8 +355,8 @@ export default class DepartmentService {
   ): Promise<any> => {
     try {
       const result = await Student.findOne({
-        where:{
-            userId:studentId,
+        where: {
+          userId: studentId,
         },
         include: [
           {
@@ -283,8 +369,8 @@ export default class DepartmentService {
           }
         ]
       })
-      const group =result.Group
-      const notAprroved =group.filter((course:any)=> course.studentscourses.approvedBy===null)
+      const group = result.Group
+      const notAprroved = group.filter((course: any) => course.studentscourses.approvedBy === null)
       return notAprroved;
     } catch (error) {
       throw error;
@@ -297,9 +383,10 @@ export default class DepartmentService {
   ): Promise<any> => {
     try {
       await StudentCourses.update(
-        {approvedBy:name
+        {
+          approvedBy: name
         },
-        { where: { studentId: studentId, courseGroupId: courseId,approvedBy:null } }
+        { where: { studentId: studentId, courseGroupId: courseId, approvedBy: null } }
       );
       const student = await this.getStudent(studentId);
       return student;
@@ -309,47 +396,47 @@ export default class DepartmentService {
   };
   AutomateSelection = async (
     studentId: number,
-    year:string
+    year: string
   ): Promise<any> => {
     try {
       const student = await this.getStudent(studentId);
-      const coursesTaken =await student.Group.filter((course:any)=>course.studentscourses?.grade!==null && 
-      course.studentscourses?.grade!=="FF").map((course:any)=>{
-       return course?.Course.code
-      })
+      const coursesTaken = await student.Group.filter((course: any) => course.studentscourses?.grade !== null &&
+        course.studentscourses?.grade !== "FF").map((course: any) => {
+          return course?.Course.code
+        })
       // get offered courses
-      const allGroup=await Group.findAll({
-        where:{
-          year:year
+      const allGroup = await Group.findAll({
+        where: {
+          year: year
         },
-        include:[
+        include: [
           {
-            model:Courses,
-            as:"Course"
+            model: Courses,
+            as: "Course"
           }
         ]
       })
-      const CoursesOffered =await allGroup?.map((course:any)=>course.Course)
-      CoursesOffered.sort((a:any, b:any) => parseFloat(a.semester) - parseFloat(b.semester));
+      const CoursesOffered = await allGroup?.map((course: any) => course.Course)
+      CoursesOffered.sort((a: any, b: any) => parseFloat(a.semester) - parseFloat(b.semester));
       //remove repeated courses
-      const filtered=   CoursesOffered.filter((v:any,i:any,a:any)=>a.findIndex((t:any)=>(t.id === v.id))===i)
+      const filtered = CoursesOffered.filter((v: any, i: any, a: any) => a.findIndex((t: any) => (t.id === v.id)) === i)
       //remove courses which are taken
-      const remove =await filtered.filter((course:any)=>!coursesTaken.includes(course.code))
+      const remove = await filtered.filter((course: any) => !coursesTaken.includes(course.code))
       //check if prerequisites is done
-      const prerequisites =await remove.filter((course:any)=>coursesTaken.includes(course.prerequisites) || course.prerequisites===null)
-      const totalcredit =await prerequisites.map((item:any) => parseInt(item.credit)).reduce((prev:number, next:number) => prev + next);
-      let credits :number=0
-      const automation= await prerequisites.map((courses:any)=>{
-        if(totalcredit<21){
+      const prerequisites = await remove.filter((course: any) => coursesTaken.includes(course.prerequisites) || course.prerequisites === null)
+      const totalcredit = await prerequisites.map((item: any) => parseInt(item.credit)).reduce((prev: number, next: number) => prev + next);
+      let credits: number = 0
+      const automation = await prerequisites.map((courses: any) => {
+        if (totalcredit < 21) {
           return courses
-        }else{
-          credits=credits+courses.credit
-          if(credits<21 && credits<19){
+        } else {
+          credits = credits + courses.credit
+          if (credits < 21 && credits < 19) {
             return courses
           }
         }
       })
-      const removeNull= await automation.filter((Course:any)=>Course!==undefined)
+      const removeNull = await automation.filter((Course: any) => Course !== undefined)
       return removeNull;
     } catch (error) {
       throw error;
