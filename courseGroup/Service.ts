@@ -3,7 +3,7 @@ const Group = require("./model");
 const Student = require("../student/model");
 const Advisor = require("../advisor/model");
 const Course = require("../courses/model");
-
+const { Op, Sequelize } = require("sequelize");
 export default class GroupService {
   constructor() { }
   //  Create Group
@@ -97,7 +97,10 @@ export default class GroupService {
             model: Course,
             as: "Course",
             where:{
-              departmentId:departmentId
+              
+              departmentId: {
+                [Op.or]: [departmentId, 4]
+              }
             }
           }
         ]

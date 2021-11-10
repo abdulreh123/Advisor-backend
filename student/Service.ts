@@ -12,7 +12,7 @@ const user = require("../auth/model")
 const { Op, Sequelize } = require("sequelize");
 export default class DepartmentService {
   constructor() { }
-  public WEEK_DAYS= ["monday", "tuesday", "wednesday","thursday","friday","saturday"]
+  public WEEK_DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
   private hashPassword = async (password: string): Promise<string> => {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
@@ -118,14 +118,14 @@ export default class DepartmentService {
       throw error;
     }
   };
-  getTimeTable = async (studentId: number,year:string): Promise<any> => {
+  getTimeTable = async (studentId: number, year: string): Promise<any> => {
     try {
       const result = await Student.findByPk(studentId, {
         include: [
           {
             model: Group,
             as: "Group",
-            where:{year:year},
+            where: { year: year },
             include: [{
               model: CourseRooms,
               as: "CourseRooms",
@@ -134,31 +134,31 @@ export default class DepartmentService {
         ]
       });
       const groups = await result.Group
-      const timetable = await Promise.all(this.WEEK_DAYS.map(async(days:string)=>{
-        let weekDay:any=[]
-       const data = await groups.filter((f:any) =>
-        f.CourseRooms.some((o:any) => days?.includes(o.day))
-       )
-       if(data.length>0){
-         const x=await Promise.all(await data.map(async(day:any)=> {
-         const table= await day.CourseRooms.filter((dayt:any)=>dayt.day===days)
-         const week=await table.map((time:any)=>{
-           return {
-            name:day.name,
-            type: "custom",
-            startTime: `2018-02-24T${time.timeStart}`,
-            endTime: `2018-02-24T${time.timeEnd}`,
-          }
-         })
-         return week
-         } ))
-         
-         weekDay.push(x)
-       }
-       const result ={
-         [`${days}`]:weekDay
-       }
-       return result
+      const timetable = await Promise.all(this.WEEK_DAYS.map(async (days: string) => {
+        let weekDay: any = []
+        const data = await groups.filter((f: any) =>
+          f.CourseRooms.some((o: any) => days?.includes(o.day))
+        )
+        if (data.length > 0) {
+          const x = await Promise.all(await data.map(async (day: any) => {
+            const table = await day.CourseRooms.filter((dayt: any) => dayt.day === days)
+            const week = await table.map((time: any) => {
+              return {
+                name: day.name,
+                type: "custom",
+                startTime: `2018-02-24T${time.timeStart}`,
+                endTime: `2018-02-24T${time.timeEnd}`,
+              }
+            })
+            return week
+          }))
+
+          weekDay.push(x)
+        }
+        const result = {
+          [`${days}`]: weekDay
+        }
+        return result
       }))
 
       return timetable;
@@ -412,7 +412,12 @@ export default class DepartmentService {
         include: [
           {
             model: Courses,
-            as: "Course"
+            as: "Course",
+            where: {
+              departmentId: {
+                [Op.or]: [student.advisor.departmentId, 4]
+              }
+            }
           }
         ]
       })

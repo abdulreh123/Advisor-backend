@@ -33,7 +33,7 @@ const Studentmodel = sequelize.define(
     },
     departmentId: {
       type: Sequelize.INTEGER,
-      allowNull: false,
+    //  allowNull: false,
     },
     advisorId: {
         type: Sequelize.INTEGER,
