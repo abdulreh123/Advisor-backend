@@ -1,5 +1,6 @@
 
 const Advisormodel = require("../advisor/model");
+const Department = require("../department/model");
 const Student = require("../student/model");
 const Group = require("../courseGroup/model");
 
@@ -18,7 +19,12 @@ export default class DepartmentService {
   //  Get Advisor
   getAdvisors = async (): Promise<any> => {
     try {
-      const departments = await Advisormodel.findAll({});
+      const departments = await Advisormodel.findAll({
+        include:[
+          {model:Department,
+          as:"Department"}
+        ]
+      });
       return departments;
     } catch (error) {
       throw error;
@@ -60,6 +66,7 @@ export default class DepartmentService {
       throw error;
     }
   };
+  
   //  Delete advisor
   deleteAdvisor = async (
     advisorId: number,

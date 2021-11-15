@@ -185,7 +185,9 @@ export default class DepartmentService {
       });
       const allCourses = await Courses.findAll({
         where: {
-          departmentId: departmentId
+          departmentId:  {
+            [Op.or]: [departmentId, 4]
+          }
         }
       })
       const stats = await result?.Group.filter((course: any) => course.studentscourses.grade !== null && course.studentscourses.grade !== 'FF')
