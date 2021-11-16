@@ -21,6 +21,10 @@ router.get(
   "/:chairmanId",
   ChairmanControllers.findOne
 );
+router.get(
+  "/statistics/:departmentId",
+  ChairmanControllers.getStat
+);
 
 router.put(
   "/:chairmanId",

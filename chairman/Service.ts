@@ -1,6 +1,10 @@
 
 const chairman = require("./model");
 const department = require("../department/model");
+const { Op, Sequelize } = require("sequelize");
+const Courses = require("../courses/model");
+const Student = require("../student/model");
+const Advisor = require("../advisor/model");
 
 export default class ChairmanService {
   constructor() { }
@@ -54,7 +58,56 @@ export default class ChairmanService {
     } catch (error) {
       throw error;
     }
-  };  
+  };    
+  getChairmansStat = async (departmentId:number): Promise<any> => {
+    try {
+const courses = await Courses.findAll({
+  where:{
+    departmentId:  {
+      [Op.or]: [departmentId, 4]
+    }
+  }})
+const student = await Student.findAll({
+  include: [
+    {
+      model: Advisor,
+      as: "advisor",
+      include: [
+        {
+          model: department,
+          as: "Department",
+          where:{
+            id:departmentId
+          }
+        },
+    ]
+    },
+]
+  })
+const advisors = await Advisor.findAll({
+      include: [
+        {
+          model: department,
+          as: "Department",
+          where:{
+            id:departmentId
+          }
+        },
+]
+  })
+  const totalcredit = await courses.map((item: any) => parseInt(item.credit)).reduce((prev: number, next: number) => prev + next);
+  const allStudents = await student.filter((item: any) => item.advisor!==null);
+  const data = {
+    courses: courses.length,
+    students: allStudents.length,
+    advisors: advisors.length,
+    totalCredits: totalcredit
+  }
+  return data
+    } catch (error) {
+      throw error;
+    }
+  };
   //  Delete advisor
   deleteChairman = async (
     ChairmanId: number,

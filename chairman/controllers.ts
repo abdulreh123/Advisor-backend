@@ -20,6 +20,25 @@ export default class AdvisorController extends ChairmanService{
       });
     }
   };
+  /**
+   * @desc  Get all Departments
+   * @param req Request
+   * @param res Response
+   */
+  getStat = async (req: any, res: any) => {
+    try {
+      const { departmentId } = req.params;
+        const Chairman = await this.getChairmansStat(departmentId);
+        res.status(200).json({ success: true, cache: false, data: Chairman });
+
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        data: [],
+        message: error.message,
+      });
+    }
+  };
 
   /**
    * @desc  Get single department
