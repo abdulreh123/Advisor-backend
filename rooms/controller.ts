@@ -1,6 +1,6 @@
 
 // const DepartmentService = require("../services/DepartmentService");
-import RoomService from './service'
+import RoomService from './RoomService'
 export default class RoomController extends RoomService{
   /**
    * @desc  Get all Departments

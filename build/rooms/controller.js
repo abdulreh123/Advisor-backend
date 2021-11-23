@@ -13,8 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // const DepartmentService = require("../services/DepartmentService");
-const service_1 = __importDefault(require("./service"));
-class RoomController extends service_1.default {
+const RoomService_1 = __importDefault(require("./RoomService"));
+class RoomController extends RoomService_1.default {
     constructor() {
         super(...arguments);
         /**
