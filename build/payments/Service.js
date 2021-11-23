@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Students = require("../student/model");
+const Students = require("../student/Model");
 const Payments = require("./Model");
 const { Op, Sequelize } = require("sequelize");
 class PaymentsService {

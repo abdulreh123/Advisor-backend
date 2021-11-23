@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const user = require("./model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const Student = require("../student/model");
+const Student = require("../student/Model");
 const dayjs = require('dayjs');
 const chairman = require("../chairman/model");
 const Advisor = require("../advisor/model");

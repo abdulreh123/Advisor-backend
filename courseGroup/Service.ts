@@ -1,6 +1,6 @@
 
 const Group = require("./model");
-const Student = require("../student/model");
+const Student = require("../student/Model");
 const Advisor = require("../advisor/model");
 const Course = require("../courses/model");
 const { Op, Sequelize } = require("sequelize");

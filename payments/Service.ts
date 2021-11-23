@@ -1,4 +1,4 @@
-const Students = require("../student/model");
+const Students = require("../student/Model");
 const Payments = require("./Model");
 const { Op,Sequelize } = require("sequelize");
 export default class PaymentsService {
