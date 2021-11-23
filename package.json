@@ -39,6 +39,7 @@
         "nodemailer": "^6.6.0",
         "nodemailer-smtp-transport": "^2.7.4",
         "path": "^0.12.7",
+        "pm2": "^5.1.2",
         "redis": "^3.1.2",
         "require-dir": "^1.2.0",
         "require-directory": "^2.1.1",
@@ -74,6 +75,8 @@
     "scripts": {
         "start-dev": "ts-node-dev --transpile-only server.ts",
         "start": " npm run build && node ./build/server.js",
+        "pm2-app-restart": "pm2 delete advisorApp && npm run build && pm2 start ./build/server.js --name advisorApp -f",
+        "pm2-app-start": " npm install && npm run build && pm2 start ./build/server.js --name advisorApp",
         "build": "tsc"
     },
     "keywords": [
