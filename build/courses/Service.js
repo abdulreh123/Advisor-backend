@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const courses = require("./model");
-const Student = require("../student/model");
+const Student = require("../student/Model");
 const Groups = require("../courseGroup/model");
 const StudentCourses = require("../student/StudentCourses.model");
 class CourseService {

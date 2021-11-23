@@ -1,6 +1,6 @@
 
 const courses = require("./model");
-const Student = require("../student/model");
+const Student = require("../student/Model");
 const Groups = require("../courseGroup/model");
 const StudentCourses = require("../student/StudentCourses.model");
 
