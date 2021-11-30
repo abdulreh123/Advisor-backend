@@ -77,10 +77,23 @@ export default class DepartmentService {
         return academicYears.indexOf(item) == pos;
       })
       await Promise.all(await uniqueArray.map(async (group: any) => {
+        let status
         const year = await groups.filter((year: any) => year.studentscourses.academicYear === group)
         const approved = year.filter((course: any) => course.studentscourses.approvedBy !== null)
         const totalcrPts = await approved.map((item: any) => parseInt(item.studentscourses.CrPts)).reduce((prev: number, next: number) => prev + next);
         const totalcredit = await approved.map((item: any) => parseInt(item.Course.credit)).reduce((prev: number, next: number) => prev + next);
+       if(totalcrPts / totalcredit>3){
+         status='Honours'
+       }
+       if(totalcrPts / totalcredit>3.5){
+         status='High honours'
+       }
+       if(totalcrPts / totalcredit>2){
+         status='Successful '
+       }
+       if(totalcrPts / totalcredit<2){
+         status='Unsuccessful '
+       }
         const data = {
           year: group,
           courses: approved,

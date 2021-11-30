@@ -34,10 +34,6 @@ export default class CourseService {
       const course = await courses.findByPk(courseId, {
         include: [
           {
-            model: Student,
-            as: "Students"
-          },
-          {
             model: Groups,
             as: "Groups"
           }

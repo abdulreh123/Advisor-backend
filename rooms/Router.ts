@@ -6,16 +6,14 @@ const RoomControllers = new RoomController();
 //const middleware = new Middlewares();
 
 // router.use(middleware.auth);
-// const seeDepartment = ["super_admin","can_see_department"];
-// const updateDepartment = [
-//   "super_admin",
-//   "can_manage_organization",
-// ];
-const destroyDepartment = ["super_admin"];
 
 router.get(
   "/",
   RoomControllers.findAll
+);
+router.get(
+  "/availability",
+  RoomControllers.getAvailable
 );
 router.get(
   "/:roomId",
@@ -29,6 +27,10 @@ router.put(
 router.post(
   "/create",
   RoomControllers.create
+);
+router.post(
+  "/create/grouproom",
+  RoomControllers.createGroup
 );
 
 router.delete(
