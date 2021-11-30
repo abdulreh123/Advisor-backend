@@ -10,15 +10,11 @@ const RoomControllers = new controller_1.default();
 //import Middlewares from "../helpers/Middlewares";
 //const middleware = new Middlewares();
 // router.use(middleware.auth);
-// const seeDepartment = ["super_admin","can_see_department"];
-// const updateDepartment = [
-//   "super_admin",
-//   "can_manage_organization",
-// ];
-const destroyDepartment = ["super_admin"];
 router.get("/", RoomControllers.findAll);
+router.get("/availability", RoomControllers.getAvailable);
 router.get("/:roomId", RoomControllers.findOne);
 router.put("/:roomId", RoomControllers.update);
 router.post("/create", RoomControllers.create);
+router.post("/create/grouproom", RoomControllers.createGroup);
 router.delete("/:roomId", RoomControllers.delete);
 module.exports = router;

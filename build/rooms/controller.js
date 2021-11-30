@@ -55,6 +55,44 @@ class RoomController extends RoomService_1.default {
             }
         });
         /**
+         * @desc  Get single department
+         * @param req Request
+         * @param res Response
+         */
+        this.getAvailable = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { day, start, end } = req.query;
+                const Room = yield this.getAvailableRoom(day, start, end);
+                res.status(200).json({ success: true, data: Room });
+            }
+            catch (error) {
+                res.status(400).json({
+                    success: false,
+                    data: [],
+                    message: error.message,
+                });
+            }
+        });
+        /**
+         * @desc  Get single department
+         * @param req Request
+         * @param res Response
+         */
+        this.createGroup = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const data = req.body;
+                const Room = yield this.createGroupRooms(data);
+                res.status(200).json({ success: true, data: Room });
+            }
+            catch (error) {
+                res.status(400).json({
+                    success: false,
+                    data: [],
+                    message: error.message,
+                });
+            }
+        });
+        /**
          * @desription  Create Department
          * @param req Request
          * @param res Response

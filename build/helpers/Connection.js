@@ -1,6 +1,6 @@
 "use strict";
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize('advisor', 'app', 'VohkxZleque', {
+const sequelize = new Sequelize('advisor', 'root', '', {
     host: 'localhost',
     dialect: 'mysql',
     logging: false

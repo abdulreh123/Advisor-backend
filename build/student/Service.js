@@ -92,10 +92,23 @@ class DepartmentService {
                     return academicYears.indexOf(item) == pos;
                 });
                 yield Promise.all(yield uniqueArray.map((group) => __awaiter(this, void 0, void 0, function* () {
+                    let status;
                     const year = yield groups.filter((year) => year.studentscourses.academicYear === group);
                     const approved = year.filter((course) => course.studentscourses.approvedBy !== null);
                     const totalcrPts = yield approved.map((item) => parseInt(item.studentscourses.CrPts)).reduce((prev, next) => prev + next);
                     const totalcredit = yield approved.map((item) => parseInt(item.Course.credit)).reduce((prev, next) => prev + next);
+                    if (totalcrPts / totalcredit > 3) {
+                        status = 'Honours';
+                    }
+                    if (totalcrPts / totalcredit > 3.5) {
+                        status = 'High honours';
+                    }
+                    if (totalcrPts / totalcredit > 2) {
+                        status = 'Successful ';
+                    }
+                    if (totalcrPts / totalcredit < 2) {
+                        status = 'Unsuccessful ';
+                    }
                     const data = {
                         year: group,
                         courses: approved,

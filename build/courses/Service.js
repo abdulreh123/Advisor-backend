@@ -45,10 +45,6 @@ class CourseService {
                 const course = yield courses.findByPk(courseId, {
                     include: [
                         {
-                            model: Student,
-                            as: "Students"
-                        },
-                        {
                             model: Groups,
                             as: "Groups"
                         }

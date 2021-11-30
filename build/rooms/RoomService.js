@@ -11,7 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const Rooms = require("./model");
 const Buildings = require('../building/model');
-const Group = require('../courseGroup/model');
+const CourseRooms = require('./courseRooms.model');
+const { Op } = require("sequelize");
 class RoomService {
     constructor() {
         //  Create Rooms
@@ -50,14 +51,43 @@ class RoomService {
                         {
                             model: Buildings,
                             as: "Buildings"
-                        },
-                        {
-                            model: Group,
-                            as: "Group"
                         }
                     ]
                 });
                 return Room;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+        //  Get Rooms
+        this.getAvailableRoom = (day, start, end) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                let room;
+                const Room = yield Rooms.findAll({
+                    include: [
+                        {
+                            model: CourseRooms,
+                            as: "CourseRoom",
+                            required: false,
+                            where: {
+                                [Op.and]: [{ day: day }, { timeStart: { [Op.and]: { [Op.lte]: end, [Op.lte]: start } } }, { timeEnd: { [Op.and]: { [Op.gt]: start, [Op.lte]: end } } }],
+                            }
+                        }
+                    ]
+                });
+                // const result = await Room.map(async(room:any)=>{
+                //   await room.CourseRoom.map((course:any)=>{
+                //   let starting = new Date("01/01/2007 " + course.timeStart).getHours();
+                //   let ending = new Date("01/01/2007 " + course.timeEnd).getHours();
+                //   let startCheck = new Date("01/01/2007 " + start).getHours();
+                //   let endCheck = new Date("01/01/2007 " + end).getHours();
+                //   if(course.day===day&&starting===startCheck)
+                //    console.log('hello')
+                //   })
+                // })
+                const filteredRoom = Room.filter((room) => room.CourseRoom.length === 0);
+                return filteredRoom;
             }
             catch (error) {
                 throw error;
@@ -72,6 +102,17 @@ class RoomService {
             }
             catch (error) {
                 throw error;
+            }
+        });
+        //  Create group rooms
+        this.createGroupRooms = (data) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const Room = yield CourseRooms.create(Object.assign({}, data));
+                return Room;
+            }
+            catch (error) {
+                throw error;
+                // throw new Error("An Error occurred while creating department!");
             }
         });
         //  Delete advisor
