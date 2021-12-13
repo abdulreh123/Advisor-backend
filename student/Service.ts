@@ -71,6 +71,8 @@ export default class DepartmentService {
         ],
       });
       let transcript: any = []
+      let totalPts:number=0
+      let totalcredits:number=0
       const groups = result.Group
       const academicYears = await groups.map((group: any) => group.studentscourses.academicYear)
       const uniqueArray = academicYears.filter(function (item: any, pos: any) {
@@ -82,6 +84,8 @@ export default class DepartmentService {
         const approved = year.filter((course: any) => course.studentscourses.approvedBy !== null)
         const totalcrPts = await approved.map((item: any) => parseInt(item.studentscourses.CrPts)).reduce((prev: number, next: number) => prev + next);
         const totalcredit = await approved.map((item: any) => parseInt(item.Course.credit)).reduce((prev: number, next: number) => prev + next);
+        totalPts=totalPts+totalcrPts
+        totalcredits=totalcredits+totalcredit
        if(totalcrPts / totalcredit>3){
          status='Honours'
        }
@@ -99,7 +103,9 @@ export default class DepartmentService {
           courses: approved,
           totalcrPts: totalcrPts,
           totalcredit: totalcredit,
-          gpa: totalcrPts / totalcredit
+          status:status,
+          gpa: totalcrPts / totalcredit,
+          cgpa: totalPts / totalcredits
         }
         transcript.push(data)
       }))
@@ -355,6 +361,9 @@ export default class DepartmentService {
       await StudentCourses.update(
         {
           grade: data.grade,
+          midtermOne:data.midtermOne,
+          midtermTwo:data.midtermTwo,
+          final:data.final,
           CrPts: points
         },
         { where: { studentId: studentId, courseGroupId: courseId } }
@@ -436,28 +445,33 @@ export default class DepartmentService {
           }
         ]
       })
-      const CoursesOffered = await allGroup?.map((course: any) => course.Course)
-      CoursesOffered.sort((a: any, b: any) => parseFloat(a.semester) - parseFloat(b.semester));
-      //remove repeated courses
-      const filtered = CoursesOffered.filter((v: any, i: any, a: any) => a.findIndex((t: any) => (t.id === v.id)) === i)
-      //remove courses which are taken
-      const remove = await filtered.filter((course: any) => !coursesTaken.includes(course.code))
-      //check if prerequisites is done
-      const prerequisites = await remove.filter((course: any) => coursesTaken.includes(course.prerequisites) || course.prerequisites === null)
-      const totalcredit = await prerequisites.map((item: any) => parseInt(item.credit)).reduce((prev: number, next: number) => prev + next);
-      let credits: number = 0
-      const automation = await prerequisites.map((courses: any) => {
-        if (totalcredit < 21) {
-          return courses
-        } else {
-          credits = credits + courses.credit
-          if (credits < 21 && credits < 19) {
+      
+      if(allGroup.length===0){
+       return []
+      }else{
+        const CoursesOffered = await allGroup?.map((course: any) => course.Course)
+        CoursesOffered.sort((a: any, b: any) => parseFloat(a.semester) - parseFloat(b.semester));
+        //remove repeated courses
+        const filtered = CoursesOffered.filter((v: any, i: any, a: any) => a.findIndex((t: any) => (t.id === v.id)) === i)
+        //remove courses which are taken
+        const remove = await filtered.filter((course: any) => !coursesTaken.includes(course.code))
+        //check if prerequisites is done
+        const prerequisites = await remove.filter((course: any) => coursesTaken.includes(course.prerequisites) || course.prerequisites === null)
+        const totalcredit = await prerequisites.map((item: any) => parseInt(item.credit)).reduce((prev: number, next: number) => prev + next);
+        let credits: number = 0
+        const automation = await prerequisites.map((courses: any) => {
+          if (totalcredit < 21) {
             return courses
+          } else {
+            credits = credits + courses.credit
+            if (credits < 21 && credits < 19) {
+              return courses
+            }
           }
-        }
-      })
-      const removeNull = await automation.filter((Course: any) => Course !== undefined)
-      return removeNull;
+        })
+        const removeNull = await automation.filter((Course: any) => Course !== undefined)
+        return removeNull;
+      }
     } catch (error) {
       throw error;
     }

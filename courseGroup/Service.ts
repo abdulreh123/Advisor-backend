@@ -3,6 +3,7 @@ const Group = require("./model");
 const Student = require("../student/Model");
 const Advisor = require("../advisor/model");
 const Course = require("../courses/model");
+const CourseRoom = require("../rooms/courseRooms.model");
 const { Op, Sequelize } = require("sequelize");
 export default class GroupService {
   constructor() { }
@@ -76,6 +77,10 @@ export default class GroupService {
           {
             model: Course,
             as: "Course",
+          },
+          {
+            model: CourseRoom,
+            as: "CourseRoom",
           }
         ]
       });

@@ -2,6 +2,9 @@
 const Rooms = require("./model");
 const Buildings = require('../building/model')
 const CourseRooms = require('./courseRooms.model')
+const moment = require('moment')
+const momentRange = require('moment-range');
+momentRange.extendMoment(moment);
 const { Op } = require("sequelize");
 export default class RoomService {
   constructor() { }
@@ -50,7 +53,7 @@ export default class RoomService {
   //  Get Rooms
   getAvailableRoom = async (day: string, start: Date, end: Date): Promise<any> => {
     try {
-      let room:[]
+      let availabeliroom:any=[]
       const Room = await Rooms.findAll({
         include: [
           {
@@ -58,23 +61,28 @@ export default class RoomService {
             as: "CourseRoom",
             required: false,
             where: {
-              [Op.and]: [{ day: day }, { timeStart: { [Op.and]: { [Op.lte]: end, [Op.lte]: start } } }, { timeEnd: { [Op.and]: { [Op.gt]: start, [Op.lte]: end } } }],
+               day: day 
             }
           }
         ]
       });
-    // const result = await Room.map(async(room:any)=>{
-    //   await room.CourseRoom.map((course:any)=>{
-    //   let starting = new Date("01/01/2007 " + course.timeStart).getHours();
-    //   let ending = new Date("01/01/2007 " + course.timeEnd).getHours();
-    //   let startCheck = new Date("01/01/2007 " + start).getHours();
-    //   let endCheck = new Date("01/01/2007 " + end).getHours();
-    //   if(course.day===day&&starting===startCheck)
-    //    console.log('hello')
-    //   })
-    // })
-      const filteredRoom = Room.filter((room: any) => room.CourseRoom.length === 0)
-      return filteredRoom;
+    availabeliroom = Room
+    const date1 = [moment(`2021-12-06 ${start}`), moment(`2021-12-06 ${end}`)];
+    Promise.all(await Room.map(async(room:any)=>{
+    await room.CourseRoom.map((course:any)=>{
+    const date2 = [moment(`2021-12-06 ${course.timeStart}`), moment(`2021-12-06 ${course.timeEnd}`)];
+    const range  = moment.range(date1);
+    const range2 = moment.range(date2);
+    // has overlapping
+    if(range.overlaps(range2)) {
+        if((range2.contains(range, true) || range.contains(range2, true)) && !date1[0].isSame(date2[0]))
+        availabeliroom = availabeliroom.filter((roo:any)=> roo.id!==room.id)
+      else
+      availabeliroom = availabeliroom.filter((roo:any)=> roo.id!==room.id)
+    }
+      })
+    }))
+      return availabeliroom;
     } catch (error) {
       throw error;
     }

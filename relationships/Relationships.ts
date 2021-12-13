@@ -150,8 +150,15 @@ as: "rooms",
 foreignKey: "roomId",
 sourceKey: "id",
 });
+Group.hasMany(CourseRooms, {
+  as: "CourseRoom",
+  onDelete: "CASCADE",
+  hooks: true,
+  foreignKey: "groupId",
+  sourceKey: "id",
+});
 CourseRooms.belongsTo(Group, {
 as: "Group",
-foreignKey: "roomId",
+foreignKey: "groupId",
 sourceKey: "id",
 });
