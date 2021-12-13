@@ -3,7 +3,7 @@ const chairman = require("./model");
 const department = require("../department/model");
 const { Op, Sequelize } = require("sequelize");
 const Courses = require("../courses/model");
-const Student = require("../student/model");
+const Student = require("../student/Model");
 const Advisor = require("../advisor/model");
 
 export default class ChairmanService {

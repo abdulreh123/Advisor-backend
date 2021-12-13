@@ -1,6 +1,6 @@
 
 const courses = require("./model");
-const Student = require("../student/model");
+const Student = require("../student/Model");
 const Groups = require("../courseGroup/model");
 const StudentCourses = require("../student/StudentCourses.model");
 
@@ -33,10 +33,6 @@ export default class CourseService {
     try {
       const course = await courses.findByPk(courseId, {
         include: [
-          {
-            model: Student,
-            as: "Students"
-          },
           {
             model: Groups,
             as: "Groups"

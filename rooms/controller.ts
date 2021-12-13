@@ -1,6 +1,6 @@
 
 // const DepartmentService = require("../services/DepartmentService");
-import RoomService from './Service'
+import RoomService from './RoomService'
 export default class RoomController extends RoomService{
   /**
    * @desc  Get all Departments
@@ -30,6 +30,43 @@ export default class RoomController extends RoomService{
     try {
       const { roomId } = req.params;
       const Room = await this.getRoom(roomId);
+      res.status(200).json({ success: true, data: Room });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        data: [],
+        message: error.message,
+      });
+    }
+  };
+
+  /**
+   * @desc  Get single department
+   * @param req Request
+   * @param res Response
+   */
+  getAvailable = async (req: any, res: any) => {
+    try {
+      const { day,start,end } = req.query;
+      const Room = await this.getAvailableRoom(day,start,end );
+      res.status(200).json({ success: true, data: Room });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        data: [],
+        message: error.message,
+      });
+    }
+  };
+  /**
+   * @desc  Get single department
+   * @param req Request
+   * @param res Response
+   */
+  createGroup = async (req: any, res: any) => {
+    try {
+      const data  = req.body;
+      const Room = await this.createGroupRooms(data);
       res.status(200).json({ success: true, data: Room });
     } catch (error) {
       res.status(400).json({
