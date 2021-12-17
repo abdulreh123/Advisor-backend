@@ -1,11 +1,11 @@
 const bcrypt = require("bcrypt");
 const Advisormodel = require("../advisor/model");
+const Annoucementmodel = require("./model");
 const Student = require("./Model");
 const StudentCourses = require("./StudentCourses.model");
 const Courses = require("../courses/model");
 const CourseRooms = require("../rooms/courseRooms.model");
 const Group = require("../courseGroup/model");
-import { DataTypes } from "sequelize/types";
 import GroupService from "../courseGroup/Service";
 const GroupServices = new GroupService();
 const user = require("../auth/model")
@@ -152,7 +152,7 @@ export default class DepartmentService {
           }
         ]
       });
-      const groups = await result.Group
+      const groups = await result?.Group
       const timetable = await Promise.all(this.WEEK_DAYS.map(async (days: string) => {
         let weekDay: any = []
         const data = await groups.filter((f: any) =>
@@ -356,8 +356,15 @@ export default class DepartmentService {
     data: any
   ): Promise<any> => {
     try {
-      const course = await Courses.findByPk(courseId)
-      const points = await this.CalculateCrPoints(data.grade, course.credit)
+      const course = await Group.findByPk(courseId,{
+        include:[
+          {
+            model:Courses,
+            as:'Course'
+          }
+        ]
+      })
+      const points = await this.CalculateCrPoints(data.grade, course.Course.credit)
       await StudentCourses.update(
         {
           grade: data.grade,
@@ -491,6 +498,31 @@ export default class DepartmentService {
       return { message: "Advisor record deleted!" };
     } catch (error) {
       throw error
+    }
+  };
+  getStudentAnnoucements = async (studentId:number): Promise<any> => {
+    try {
+   const studentGroup = await StudentCourses.findAll({
+    studentId:studentId
+   })
+   let groupIds =await studentGroup.map((student:any)=>student.groupId)
+   groupIds.push(null)
+   const annoucements = Annoucementmodel.findAll({
+     where:{ 
+        groupIdId: {
+      [Op.or]: groupIds
+    },  
+    include: [
+      {
+        model: Group,
+        as: "Group"
+      },
+    ]
+     }
+   })
+      return annoucements;
+    } catch (error) {
+      throw error;
     }
   };
 }

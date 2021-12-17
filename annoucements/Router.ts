@@ -1,7 +1,7 @@
 import express = require("express");
-import GroupController from "./controllers";
+import annoucementController from "./controllers";
 const router = express.Router();
-const GourseControllers = new GroupController();
+const AnnoucementController = new annoucementController();
 //import Middlewares from "../helpers/Middlewares";
 //const middleware = new Middlewares();
 
@@ -15,37 +15,25 @@ const destroyDepartment = ["super_admin"];
 
 router.get(
   "/",
-  GourseControllers.findAll
+  AnnoucementController.findAll
 );
 router.get(
-  "/:groupId",
-  GourseControllers.findOne
-);
-router.get(
-  "/department/:departmentId",
-  GourseControllers.findByDepartment
-);
-router.get(
-  "/lecturer/:lecturerId",
-  GourseControllers.findByLecturer
-);
-router.get(
-  "/clash/:groupIds",
-  GourseControllers.clash
+  "/:annoucemrntId",
+  AnnoucementController.findOne
 );
 
 router.put(
-  "/:groupId",
-  GourseControllers.update
+  "/:annoucemrntId",
+  AnnoucementController.update
 );
 router.post(
   "/create",
-  GourseControllers.create
+  AnnoucementController.create
 );
 
 router.delete(
-  "/:groupId",
-  GourseControllers.delete
+  "/:annoucemrntId",
+  AnnoucementController.delete
 );
 
 module.exports = router;
