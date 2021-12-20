@@ -21,6 +21,14 @@ router.get(
   "/:annoucemrntId",
   AnnoucementController.findOne
 );
+router.get(
+  "/student/:studentId",
+  AnnoucementController.studentAnnoucment
+);
+router.get(
+  "/dashboard/announcement",
+  AnnoucementController.getDashboard
+);
 
 router.put(
   "/:annoucemrntId",

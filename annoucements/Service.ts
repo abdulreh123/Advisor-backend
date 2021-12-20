@@ -1,6 +1,8 @@
 
 const Annoucementmodel = require("./model");
 const group = require('../courseGroup/model')
+const StudentCourses = require("../student/StudentCourses.model");
+const { Op } = require("sequelize");
 export default class BuildingService {
   constructor() { }
   //  Create Building
@@ -36,6 +38,27 @@ export default class BuildingService {
         where:{
           groupId:null
         },
+      });
+      return annoucement;
+    } catch (error) {
+      throw error;
+    }
+  };
+  //  Get Annoucement
+  getStudentAnnoucements = async (studentId:number): Promise<any> => {
+    try {
+      const groups = await StudentCourses.findAll({
+        where:{
+          studentId:studentId
+        },
+      });
+      const ids = groups.map((group:any)=>group.courseGroupId)
+      const annoucement = await Annoucementmodel.findAll({
+        where:{
+          groupId:{
+            [Op.or]:ids
+          }
+        },
         include: [
           {
             model: group,
@@ -55,7 +78,7 @@ export default class BuildingService {
         include: [
          {
             model: group,
-            as: "group"
+            as: "Group"
           },
         ]
       });
@@ -74,7 +97,7 @@ export default class BuildingService {
         include: [
          {
             model: group,
-            as: "group"
+            as: "Group"
           },
         ]
       });

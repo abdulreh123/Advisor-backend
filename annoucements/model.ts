@@ -15,8 +15,7 @@ const Annoucementmodel = sequelize.define(
       allowNull: false,
   },
     sender:{
-      type:Sequelize.INTEGER,
-      allowNull: false,
+      type:Sequelize.STRING,
   },
     groupId:{
       type:Sequelize.INTEGER,

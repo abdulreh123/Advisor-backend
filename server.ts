@@ -45,7 +45,7 @@ const resources = [
     router: Routes.paymentRoutes,
   },
   {
-    endpoint: "/api/annoucement",
+    endpoint: "/api/announcement",
     router: Routes.annoucementRoutes,
   },
   {
