@@ -2,6 +2,7 @@
 
 const Group = require("./model");
 const Student = require("../student/Model");
+const Department = require("../department/Model");
 const Advisor = require("../advisor/model");
 const Course = require("../courses/model");
 const CourseRoom = require("../rooms/courseRooms.model");
@@ -85,6 +86,15 @@ export default class GroupService {
           {
             model: CourseRoom,
             as: "CourseRoom",
+          },
+          {
+            model: Advisor,
+            as: "Advisor",
+            include: [  {
+              model: Department,
+              as: "Department",
+            },
+            ]
           }
         ]
       });
