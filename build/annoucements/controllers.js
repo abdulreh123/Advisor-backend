@@ -14,18 +14,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // const DepartmentService = require("../services/DepartmentService");
 const Service_1 = __importDefault(require("./Service"));
-class AdvisorController extends Service_1.default {
+class AnnoucementController extends Service_1.default {
     constructor() {
         super(...arguments);
         /**
-         * @desc  Get all Departments
          * @param req Request
          * @param res Response
          */
         this.findAll = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const Group = yield this.getGroups();
-                res.status(200).json({ success: true, cache: false, data: Group });
+                const Annoucement = yield this.getAnnoucements();
+                res.status(200).json({ success: true, cache: false, data: Annoucement });
             }
             catch (error) {
                 res.status(400).json({
@@ -36,15 +35,27 @@ class AdvisorController extends Service_1.default {
             }
         });
         /**
-         * @desc  Get all Departments
          * @param req Request
          * @param res Response
          */
-        this.findByDepartment = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.studentAnnoucment = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const { departmentId } = req.params;
-                const Group = yield this.getDepartmentGroup(departmentId);
-                res.status(200).json({ success: true, cache: false, data: Group });
+                const { studentId } = req.params;
+                const Annoucement = yield this.getStudentAnnoucements(studentId);
+                res.status(200).json({ success: true, cache: false, data: Annoucement });
+            }
+            catch (error) {
+                res.status(400).json({
+                    success: false,
+                    data: [],
+                    message: error.message,
+                });
+            }
+        });
+        this.getDashboard = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const Annoucement = yield this.getDashboardAnnoucements();
+                res.status(200).json({ success: true, cache: false, data: Annoucement });
             }
             catch (error) {
                 res.status(400).json({
@@ -61,47 +72,9 @@ class AdvisorController extends Service_1.default {
          */
         this.findOne = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const { groupId } = req.params;
-                const Group = yield this.getGroup(groupId);
-                res.status(200).json({ success: true, data: Group });
-            }
-            catch (error) {
-                res.status(400).json({
-                    success: false,
-                    data: [],
-                    message: error.message,
-                });
-            }
-        });
-        /**
-         * @desc  Get single department
-         * @param req Request
-         * @param res Response
-         */
-        this.clash = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { groupIds } = req.params;
-                const Group = yield this.checkForClash(groupIds);
-                res.status(200).json({ success: true, data: Group });
-            }
-            catch (Error) {
-                res.status(400).json({
-                    success: false,
-                    data: [],
-                    message: Error.message,
-                });
-            }
-        });
-        /**
-         * @desc  Get single department
-         * @param req Request
-         * @param res Response
-         */
-        this.findByLecturer = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { lecturerId } = req.params;
-                const Group = yield this.getLecturerGroup(lecturerId);
-                res.status(200).json({ success: true, data: Group });
+                const { annoucemrntId } = req.params;
+                const Annoucement = yield this.getAnnoucement(annoucemrntId);
+                res.status(200).json({ success: true, data: Annoucement });
             }
             catch (error) {
                 res.status(400).json({
@@ -118,11 +91,11 @@ class AdvisorController extends Service_1.default {
          */
         this.create = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!req.body.name) {
+                if (!req.body.content) {
                     res.status(400).json({ message: "Form inputs cannot be empty" });
                 }
-                const Group = yield this.createGroup(req.body);
-                res.status(200).json({ success: true, data: Group, message: `${Group.name} added!` });
+                const Annoucement = yield this.createAnnoucement(req.body);
+                res.status(200).json({ success: true, data: Annoucement, message: `Annoucement added!` });
             }
             catch (error) {
                 res.status(400).json({
@@ -139,10 +112,10 @@ class AdvisorController extends Service_1.default {
          */
         this.update = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const { groupId } = req.params;
+                const { annoucementId } = req.params;
                 const body = req.body;
-                const advisors = yield this.updateGroup(groupId, body);
-                res.status(200).json({ success: true, data: advisors, message: ` ${advisors.name} updated!` });
+                const Annoucement = yield this.updateAnnoucement(annoucementId, body);
+                res.status(200).json({ success: true, data: Annoucement, message: ` Annoucement updated!` });
             }
             catch (error) {
                 res
@@ -157,8 +130,8 @@ class AdvisorController extends Service_1.default {
          */
         this.delete = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const { groupId } = req.params;
-                const advisors = yield this.deleteGroup(groupId);
+                const { annoucementId } = req.params;
+                const advisors = yield this.deleteAnnoucement(annoucementId);
                 res.status(200).json({ success: true, data: advisors });
             }
             catch (error) {
@@ -171,4 +144,4 @@ class AdvisorController extends Service_1.default {
         });
     }
 }
-exports.default = AdvisorController;
+exports.default = AnnoucementController;

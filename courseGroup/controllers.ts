@@ -12,7 +12,7 @@ export default class AdvisorController extends GroupService{
         const Group = await this.getGroups();
         res.status(200).json({ success: true, cache: false, data: Group });
 
-    } catch (error:any) {
+    } catch (error) {
       res.status(400).json({
         success: false,
         data: [],
@@ -31,7 +31,7 @@ export default class AdvisorController extends GroupService{
         const Group = await this.getDepartmentGroup(departmentId);
         res.status(200).json({ success: true, cache: false, data: Group });
 
-    } catch (error:any) {
+    } catch (error) {
       res.status(400).json({
         success: false,
         data: [],
@@ -50,7 +50,7 @@ export default class AdvisorController extends GroupService{
       const { groupId } = req.params;
       const Group = await this.getGroup(groupId);
       res.status(200).json({ success: true, data: Group });
-    } catch (error:any) {
+    } catch (error) {
       res.status(400).json({
         success: false,
         data: [],
@@ -68,7 +68,7 @@ export default class AdvisorController extends GroupService{
       const { groupIds } = req.params;
       const Group = await this.checkForClash(groupIds);
       res.status(200).json({ success: true, data: Group });
-    } catch (Error:any) {
+    } catch (Error) {
       res.status(400).json({
         success: false,
         data: [],
@@ -86,7 +86,7 @@ export default class AdvisorController extends GroupService{
       const { lecturerId } = req.params;
       const Group = await this.getLecturerGroup(lecturerId);
       res.status(200).json({ success: true, data: Group });
-    } catch (error:any) {
+    } catch (error) {
       res.status(400).json({
         success: false,
         data: [],
@@ -107,7 +107,7 @@ export default class AdvisorController extends GroupService{
       }
       const Group = await this.createGroup(req.body);
       res.status(200).json({ success: true, data: Group,message:`${Group.name} added!` });
-    } catch (error:any) {
+    } catch (error) {
       res.status(400).json({
         success: false,
         data: [],
@@ -127,7 +127,7 @@ export default class AdvisorController extends GroupService{
       const body = req.body;
       const advisors = await this.updateGroup(groupId, body);
       res.status(200).json({ success: true, data: advisors,message:` ${advisors.name} updated!` });
-    } catch (error:any) {
+    } catch (error) {
       res
         .status(400)
         .json({ success: false, data: [], message: error.message });
@@ -144,7 +144,7 @@ export default class AdvisorController extends GroupService{
       const { groupId } = req.params;
       const advisors = await this.deleteGroup(groupId);
       res.status(200).json({ success: true, data: advisors });
-    } catch (error:any) {
+    } catch (error) {
       res.status(400).json({
         success: false,
         data: [],

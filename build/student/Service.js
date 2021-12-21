@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt = require("bcrypt");
 const Advisormodel = require("../advisor/model");
+const Annoucementmodel = require("./model");
 const Student = require("./Model");
 const StudentCourses = require("./StudentCourses.model");
 const Courses = require("../courses/model");
@@ -86,6 +87,8 @@ class DepartmentService {
                     ],
                 });
                 let transcript = [];
+                let totalPts = 0;
+                let totalcredits = 0;
                 const groups = result.Group;
                 const academicYears = yield groups.map((group) => group.studentscourses.academicYear);
                 const uniqueArray = academicYears.filter(function (item, pos) {
@@ -97,6 +100,8 @@ class DepartmentService {
                     const approved = year.filter((course) => course.studentscourses.approvedBy !== null);
                     const totalcrPts = yield approved.map((item) => parseInt(item.studentscourses.CrPts)).reduce((prev, next) => prev + next);
                     const totalcredit = yield approved.map((item) => parseInt(item.Course.credit)).reduce((prev, next) => prev + next);
+                    totalPts = totalPts + totalcrPts;
+                    totalcredits = totalcredits + totalcredit;
                     if (totalcrPts / totalcredit > 3) {
                         status = 'Honours';
                     }
@@ -114,7 +119,9 @@ class DepartmentService {
                         courses: approved,
                         totalcrPts: totalcrPts,
                         totalcredit: totalcredit,
-                        gpa: totalcrPts / totalcredit
+                        status: status,
+                        gpa: totalcrPts / totalcredit,
+                        cgpa: totalPts / totalcredits
                     };
                     transcript.push(data);
                 })));
@@ -163,7 +170,7 @@ class DepartmentService {
                         }
                     ]
                 });
-                const groups = yield result.Group;
+                const groups = yield (result === null || result === void 0 ? void 0 : result.Group);
                 const timetable = yield Promise.all(this.WEEK_DAYS.map((days) => __awaiter(this, void 0, void 0, function* () {
                     let weekDay = [];
                     const data = yield groups.filter((f) => f.CourseRooms.some((o) => days === null || days === void 0 ? void 0 : days.includes(o.day)));
@@ -357,10 +364,20 @@ class DepartmentService {
         });
         this.updateGrade = (studentId, courseId, data) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const course = yield Courses.findByPk(courseId);
-                const points = yield this.CalculateCrPoints(data.grade, course.credit);
+                const course = yield Group.findByPk(courseId, {
+                    include: [
+                        {
+                            model: Courses,
+                            as: 'Course'
+                        }
+                    ]
+                });
+                const points = yield this.CalculateCrPoints(data.grade, course.Course.credit);
                 yield StudentCourses.update({
                     grade: data.grade,
+                    midtermOne: data.midtermOne,
+                    midtermTwo: data.midtermTwo,
+                    final: data.final,
                     CrPts: points
                 }, { where: { studentId: studentId, courseGroupId: courseId } });
                 const student = yield this.getStudent(studentId);
@@ -434,29 +451,34 @@ class DepartmentService {
                         }
                     ]
                 });
-                const CoursesOffered = yield (allGroup === null || allGroup === void 0 ? void 0 : allGroup.map((course) => course.Course));
-                CoursesOffered.sort((a, b) => parseFloat(a.semester) - parseFloat(b.semester));
-                //remove repeated courses
-                const filtered = CoursesOffered.filter((v, i, a) => a.findIndex((t) => (t.id === v.id)) === i);
-                //remove courses which are taken
-                const remove = yield filtered.filter((course) => !coursesTaken.includes(course.code));
-                //check if prerequisites is done
-                const prerequisites = yield remove.filter((course) => coursesTaken.includes(course.prerequisites) || course.prerequisites === null);
-                const totalcredit = yield prerequisites.map((item) => parseInt(item.credit)).reduce((prev, next) => prev + next);
-                let credits = 0;
-                const automation = yield prerequisites.map((courses) => {
-                    if (totalcredit < 21) {
-                        return courses;
-                    }
-                    else {
-                        credits = credits + courses.credit;
-                        if (credits < 21 && credits < 19) {
+                if (allGroup.length === 0) {
+                    return [];
+                }
+                else {
+                    const CoursesOffered = yield (allGroup === null || allGroup === void 0 ? void 0 : allGroup.map((course) => course.Course));
+                    CoursesOffered.sort((a, b) => parseFloat(a.semester) - parseFloat(b.semester));
+                    //remove repeated courses
+                    const filtered = CoursesOffered.filter((v, i, a) => a.findIndex((t) => (t.id === v.id)) === i);
+                    //remove courses which are taken
+                    const remove = yield filtered.filter((course) => !coursesTaken.includes(course.code));
+                    //check if prerequisites is done
+                    const prerequisites = yield remove.filter((course) => coursesTaken.includes(course.prerequisites) || course.prerequisites === null);
+                    const totalcredit = yield prerequisites.map((item) => parseInt(item.credit)).reduce((prev, next) => prev + next);
+                    let credits = 0;
+                    const automation = yield prerequisites.map((courses) => {
+                        if (totalcredit < 21) {
                             return courses;
                         }
-                    }
-                });
-                const removeNull = yield automation.filter((Course) => Course !== undefined);
-                return removeNull;
+                        else {
+                            credits = credits + courses.credit;
+                            if (credits < 21 && credits < 19) {
+                                return courses;
+                            }
+                        }
+                    });
+                    const removeNull = yield automation.filter((Course) => Course !== undefined);
+                    return removeNull;
+                }
             }
             catch (error) {
                 throw error;
@@ -473,6 +495,32 @@ class DepartmentService {
                 });
                 department.destroy();
                 return { message: "Advisor record deleted!" };
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+        this.getStudentAnnoucements = (studentId) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const studentGroup = yield StudentCourses.findAll({
+                    studentId: studentId
+                });
+                let groupIds = yield studentGroup.map((student) => student.groupId);
+                groupIds.push(null);
+                const annoucements = Annoucementmodel.findAll({
+                    where: {
+                        groupIdId: {
+                            [Op.or]: groupIds
+                        },
+                        include: [
+                            {
+                                model: Group,
+                                as: "Group"
+                            },
+                        ]
+                    }
+                });
+                return annoucements;
             }
             catch (error) {
                 throw error;

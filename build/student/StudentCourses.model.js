@@ -12,6 +12,15 @@ const StudentCoursesmodel = sequelize.define("studentscourses", {
     grade: {
         type: Sequelize.STRING,
     },
+    midtermOne: {
+        type: Sequelize.INTEGER,
+    },
+    midtermTwo: {
+        type: Sequelize.INTEGER,
+    },
+    final: {
+        type: Sequelize.INTEGER,
+    },
     CrPts: {
         type: Sequelize.STRING,
     },

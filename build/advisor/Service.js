@@ -9,16 +9,43 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const bcrypt = require("bcrypt");
 const Advisormodel = require("../advisor/model");
 const Department = require("../department/model");
 const Student = require("../student/Model");
 const Group = require("../courseGroup/model");
+const user = require("../auth/model");
+const dayjs = require('dayjs');
 class DepartmentService {
     constructor() {
+        this.hashPassword = (password) => __awaiter(this, void 0, void 0, function* () {
+            const salt = yield bcrypt.genSalt(10);
+            const hash = yield bcrypt.hash(password, salt);
+            return hash;
+        });
+        this.getAcademicYear = () => __awaiter(this, void 0, void 0, function* () {
+            let year = '';
+            const month = dayjs().month();
+            const currentyear = dayjs().year();
+            if (month >= 1 && month <= 5) {
+                year = `${currentyear - 1}-${currentyear} - Spring`;
+            }
+            if (month > 5 && month <= 8) {
+                year = `${currentyear - 1}-${currentyear} - Summer`;
+            }
+            if (month > 8 || month < 1) {
+                year = `${currentyear}-${currentyear + 1} - Fall`;
+            }
+            return year;
+        });
         //  Create Advisor
         this.createAdvisor = (data) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const department = yield Advisormodel.create(Object.assign({}, data));
+                if (data.user) {
+                    const password = yield this.hashPassword(data.user.password);
+                    yield user.create({ userName: data.user.userName, password: password, userAdvisor: department.id });
+                }
                 return department;
             }
             catch (error) {
@@ -44,6 +71,7 @@ class DepartmentService {
         //  Get Advisor
         this.getAdvisor = (advisorId) => __awaiter(this, void 0, void 0, function* () {
             try {
+                const year = yield this.getAcademicYear();
                 const result = yield Advisormodel.findByPk(advisorId, {
                     include: [
                         {
@@ -52,7 +80,7 @@ class DepartmentService {
                         },
                         {
                             model: Group,
-                            as: "Group"
+                            as: "Group",
                         }
                     ]
                 });

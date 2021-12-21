@@ -12,6 +12,7 @@ const Rooms = require("../rooms/model");
 const Payments = require("../payments/Model");
 const CourseRooms = require("../rooms/courseRooms.model");
 const Session = require("../helpers/session");
+const Annoucementmodel = require("../annoucements/model");
 Department.hasMany(Courses, {
     as: "courses",
     onDelete: "CASCADE",
@@ -147,8 +148,27 @@ CourseRooms.belongsTo(Rooms, {
     foreignKey: "roomId",
     sourceKey: "id",
 });
+Group.hasMany(CourseRooms, {
+    as: "CourseRoom",
+    onDelete: "CASCADE",
+    hooks: true,
+    foreignKey: "groupId",
+    sourceKey: "id",
+});
 CourseRooms.belongsTo(Group, {
     as: "Group",
-    foreignKey: "roomId",
+    foreignKey: "groupId",
+    sourceKey: "id",
+});
+Group.hasMany(Annoucementmodel, {
+    as: "Annoucement",
+    onDelete: "CASCADE",
+    hooks: true,
+    foreignKey: "groupId",
+    sourceKey: "id",
+});
+Annoucementmodel.belongsTo(Group, {
+    as: "Group",
+    foreignKey: "groupId",
     sourceKey: "id",
 });

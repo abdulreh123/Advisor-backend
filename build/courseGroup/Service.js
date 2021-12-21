@@ -11,8 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const Group = require("./model");
 const Student = require("../student/Model");
+const Department = require("../department/Model");
 const Advisor = require("../advisor/model");
 const Course = require("../courses/model");
+const CourseRoom = require("../rooms/courseRooms.model");
+const moment = require('moment');
+const momentRange = require('moment-range');
+momentRange.extendMoment(moment);
 const { Op, Sequelize } = require("sequelize");
 class GroupService {
     constructor() {
@@ -88,10 +93,61 @@ class GroupService {
                         {
                             model: Course,
                             as: "Course",
+                        },
+                        {
+                            model: CourseRoom,
+                            as: "CourseRoom",
+                        },
+                        {
+                            model: Advisor,
+                            as: "Advisor",
+                            include: [{
+                                    model: Department,
+                                    as: "Department",
+                                },
+                            ]
                         }
                     ]
                 });
                 return group;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+        this.checkForClash = (groupIds) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const parse = JSON.parse(groupIds);
+                const rooms = yield CourseRoom.findAll({
+                    where: {
+                        groupId: {
+                            [Op.or]: parse
+                        }
+                    },
+                });
+                let errors = [];
+                yield Promise.all(yield rooms.map((room1) => __awaiter(this, void 0, void 0, function* () {
+                    const group1 = yield this.getGroup(room1.groupId);
+                    const sameDay = yield rooms.filter((room) => room.day === room1.day && room1.groupId !== room.groupId);
+                    const date1 = [moment(`2021-12-06 ${room1.timeStart}`), moment(`2021-12-06 ${room1.timeEnd}`)];
+                    const range = moment.range(date1);
+                    yield Promise.all(yield sameDay.map((timings) => __awaiter(this, void 0, void 0, function* () {
+                        const date2 = [moment(`2021-12-06 ${timings.timeStart}`), moment(`2021-12-06 ${timings.timeEnd}`)];
+                        const range2 = moment.range(date2);
+                        // has overlapping
+                        if (range.overlaps(range2)) {
+                            if ((range2.contains(range, true) || range.contains(range2, true)) && !date1[0].isSame(date2[0])) {
+                                const group = yield this.getGroup(timings.groupId);
+                                yield errors.push(`${group.name} has 1 hour clash with ${group1.name}`);
+                            }
+                            else {
+                                const group = yield this.getGroup(timings.groupId);
+                                throw Error(`${group.name} has a clash with ${group1.name}`);
+                            }
+                        }
+                    })));
+                })));
+                return errors;
             }
             catch (error) {
                 throw error;

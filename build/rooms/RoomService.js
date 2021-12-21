@@ -12,6 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Rooms = require("./model");
 const Buildings = require('../building/model');
 const CourseRooms = require('./courseRooms.model');
+const moment = require('moment');
+const momentRange = require('moment-range');
+momentRange.extendMoment(moment);
 const { Op } = require("sequelize");
 class RoomService {
     constructor() {
@@ -63,7 +66,7 @@ class RoomService {
         //  Get Rooms
         this.getAvailableRoom = (day, start, end) => __awaiter(this, void 0, void 0, function* () {
             try {
-                let room;
+                let availabeliroom = [];
                 const Room = yield Rooms.findAll({
                     include: [
                         {
@@ -71,23 +74,28 @@ class RoomService {
                             as: "CourseRoom",
                             required: false,
                             where: {
-                                [Op.and]: [{ day: day }, { timeStart: { [Op.and]: { [Op.lte]: end, [Op.lte]: start } } }, { timeEnd: { [Op.and]: { [Op.gt]: start, [Op.lte]: end } } }],
+                                day: day
                             }
                         }
                     ]
                 });
-                // const result = await Room.map(async(room:any)=>{
-                //   await room.CourseRoom.map((course:any)=>{
-                //   let starting = new Date("01/01/2007 " + course.timeStart).getHours();
-                //   let ending = new Date("01/01/2007 " + course.timeEnd).getHours();
-                //   let startCheck = new Date("01/01/2007 " + start).getHours();
-                //   let endCheck = new Date("01/01/2007 " + end).getHours();
-                //   if(course.day===day&&starting===startCheck)
-                //    console.log('hello')
-                //   })
-                // })
-                const filteredRoom = Room.filter((room) => room.CourseRoom.length === 0);
-                return filteredRoom;
+                availabeliroom = Room;
+                const date1 = [moment(`2021-12-06 ${start}`), moment(`2021-12-06 ${end}`)];
+                Promise.all(yield Room.map((room) => __awaiter(this, void 0, void 0, function* () {
+                    yield room.CourseRoom.map((course) => {
+                        const date2 = [moment(`2021-12-06 ${course.timeStart}`), moment(`2021-12-06 ${course.timeEnd}`)];
+                        const range = moment.range(date1);
+                        const range2 = moment.range(date2);
+                        // has overlapping
+                        if (range.overlaps(range2)) {
+                            if ((range2.contains(range, true) || range.contains(range2, true)) && !date1[0].isSame(date2[0]))
+                                availabeliroom = availabeliroom.filter((roo) => roo.id !== room.id);
+                            else
+                                availabeliroom = availabeliroom.filter((roo) => roo.id !== room.id);
+                        }
+                    });
+                })));
+                return availabeliroom;
             }
             catch (error) {
                 throw error;
