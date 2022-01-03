@@ -26,6 +26,10 @@ router.put(
   "/:advisorId",
   AdvisorControllers.update
 );
+router.get(
+  "/time-table/:advisorId",
+  AdvisorControllers.timeTable
+);
 router.post(
   "/create",
   AdvisorControllers.create

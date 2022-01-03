@@ -1,5 +1,4 @@
 
-// const DepartmentService = require("../services/DepartmentService");
 import AdvisorService from './Service'
 export default class AdvisorController extends AdvisorService{
   /**
@@ -30,6 +29,25 @@ export default class AdvisorController extends AdvisorService{
     try {
       const { advisorId } = req.params;
       const advisors = await this.getAdvisor(advisorId);
+      res.status(200).json({ success: true, data: advisors });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        data: [],
+        message: error.message,
+      });
+    }
+  };
+  /**
+   * @desc  Get single department
+   * @param req Request
+   * @param res Response
+   */
+   timeTable = async (req: any, res: any) => {
+    try {
+      const { advisorId } = req.params;
+      const { year } = req.query;
+      const advisors = await this.getTimeTable(advisorId,year);
       res.status(200).json({ success: true, data: advisors });
     } catch (error) {
       res.status(400).json({
