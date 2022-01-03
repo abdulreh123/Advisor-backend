@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const Advisormodel = require("../advisor/model");
-const Annoucementmodel = require("./model");
+const Annoucementmodel = require("../annoucements/model");
 const Student = require("./Model");
 const StudentCourses = require("./StudentCourses.model");
 const Courses = require("../courses/model");
