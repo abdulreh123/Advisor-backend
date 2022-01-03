@@ -464,8 +464,10 @@ class DepartmentService {
                     //check if prerequisites is done
                     const prerequisites = yield remove.filter((course) => coursesTaken.includes(course.prerequisites) || course.prerequisites === null);
                     const totalcredit = yield prerequisites.map((item) => parseInt(item.credit)).reduce((prev, next) => prev + next);
+                    const prerequisitesId = prerequisites.map((group) => group.id);
+                    const result = yield allGroup.filter((course) => prerequisitesId.includes(course.Course.id));
                     let credits = 0;
-                    const automation = yield prerequisites.map((courses) => {
+                    const automation = yield result.map((courses) => {
                         if (totalcredit < 21) {
                             return courses;
                         }
@@ -477,7 +479,7 @@ class DepartmentService {
                         }
                     });
                     const removeNull = yield automation.filter((Course) => Course !== undefined);
-                    return removeNull;
+                    return result;
                 }
             }
             catch (error) {

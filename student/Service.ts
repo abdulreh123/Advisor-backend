@@ -465,8 +465,11 @@ export default class DepartmentService {
         //check if prerequisites is done
         const prerequisites = await remove.filter((course: any) => coursesTaken.includes(course.prerequisites) || course.prerequisites === null)
         const totalcredit = await prerequisites.map((item: any) => parseInt(item.credit)).reduce((prev: number, next: number) => prev + next);
+        
+        const prerequisitesId = prerequisites.map((group:any)=> group.id)
+        const result = await allGroup.filter((course: any) => prerequisitesId.includes(course.Course.id))
         let credits: number = 0
-        const automation = await prerequisites.map((courses: any) => {
+        const automation = await result.map((courses: any) => {
           if (totalcredit < 21) {
             return courses
           } else {
@@ -477,7 +480,7 @@ export default class DepartmentService {
           }
         })
         const removeNull = await automation.filter((Course: any) => Course !== undefined)
-        return removeNull;
+        return result;
       }
     } catch (error) {
       throw error;
