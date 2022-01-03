@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const Group = require("./model");
 const Student = require("../student/Model");
-const Department = require("../department/Model");
+const Department = require("../department/model");
 const Advisor = require("../advisor/model");
 const Course = require("../courses/model");
 const CourseRoom = require("../rooms/courseRooms.model");
