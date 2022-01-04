@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// const DepartmentService = require("../services/DepartmentService");
 const Service_1 = __importDefault(require("./Service"));
 class AdvisorController extends Service_1.default {
     constructor() {
@@ -44,6 +43,26 @@ class AdvisorController extends Service_1.default {
             try {
                 const { advisorId } = req.params;
                 const advisors = yield this.getAdvisor(advisorId);
+                res.status(200).json({ success: true, data: advisors });
+            }
+            catch (error) {
+                res.status(400).json({
+                    success: false,
+                    data: [],
+                    message: error.message,
+                });
+            }
+        });
+        /**
+         * @desc  Get single department
+         * @param req Request
+         * @param res Response
+         */
+        this.timeTable = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { advisorId } = req.params;
+                const { year } = req.query;
+                const advisors = yield this.getTimeTable(advisorId, year);
                 res.status(200).json({ success: true, data: advisors });
             }
             catch (error) {

@@ -115,7 +115,7 @@ export default class AuthService {
       };
       return result;
     } catch (error) {
-      throw Error(error);
+      throw (error);
     }
   }
   protected async comparePassword(
@@ -213,7 +213,7 @@ export default class AuthService {
       };
       return result;
     } catch (error) {
-      throw Error(error);
+      throw (error);
     }
   }
   //  Generate jwt token
@@ -224,7 +224,7 @@ export default class AuthService {
       });
       return token;
     } catch (error) {
-      throw Error(error);
+      throw (error);
     }
   };
 }
