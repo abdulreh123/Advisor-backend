@@ -432,7 +432,7 @@ export default class DepartmentService {
     try {
       const student = await this.getStudent(studentId);
       const coursesTaken = await student.Group.filter((course: any) => course.studentscourses?.grade !== null &&
-        course.studentscourses?.grade !== "FF").map((course: any) => {
+        course.studentscourses?.grade !== "FF" || course.studentscourses?.academicYear !==year ).map((course: any) => {
           return course?.Course.code
         })
       // get offered courses
@@ -454,7 +454,32 @@ export default class DepartmentService {
       })
       
       if(allGroup.length===0){
-       return []
+      const allCourses= await Courses.findAll({
+        where: {
+          departmentId: {
+            [Op.or]: [student.advisor.departmentId, 4]
+          }}
+      }) 
+        //remove courses which are taken
+        const remove = await allCourses.filter((course: any) => !coursesTaken.includes(course.code))
+        const prerequisites = await remove.filter((course: any) => coursesTaken.includes(course.prerequisites) || course.prerequisites === null)
+        const totalcredit = await prerequisites.map((item: any) => parseInt(item.credit)).reduce((prev: number, next: number) => prev + next);
+        const prerequisitesId = prerequisites.map((group:any)=> group.id)
+        const result = await allCourses.filter((course: any) => prerequisitesId.includes(course.id))
+        let credits: number = 0
+        const creditLimit = year.includes('Summer')? 12:21
+        const automation = await result.map((courses: any) => {
+          if (totalcredit < creditLimit) {
+            return courses
+          } else {
+            credits = credits + courses.credit
+            if (credits <= creditLimit) {
+              return courses
+            }
+          }
+        })
+        const removeNull = await automation.filter((Course: any) => Course !== undefined)
+       return removeNull
       }else{
         const CoursesOffered = await allGroup?.map((course: any) => course.Course)
         CoursesOffered.sort((a: any, b: any) => parseFloat(a.semester) - parseFloat(b.semester));
