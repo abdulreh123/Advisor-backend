@@ -48,7 +48,7 @@ class AuthService {
                 return token;
             }
             catch (error) {
-                throw Error(error);
+                throw (error);
             }
         });
     }
@@ -138,7 +138,7 @@ class AuthService {
                 return result;
             }
             catch (error) {
-                throw Error(error);
+                throw (error);
             }
         });
     }
@@ -240,7 +240,7 @@ class AuthService {
                 return result;
             }
             catch (error) {
-                throw Error(error);
+                throw (error);
             }
         });
     }

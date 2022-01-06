@@ -19,6 +19,7 @@ const destroyDepartment = ["super_admin"];
 router.get("/", AdvisorControllers.findAll);
 router.get("/:advisorId", AdvisorControllers.findOne);
 router.put("/:advisorId", AdvisorControllers.update);
+router.get("/time-table/:advisorId", AdvisorControllers.timeTable);
 router.post("/create", AdvisorControllers.create);
 router.delete("/:advisorId", AdvisorControllers.delete);
 module.exports = router;

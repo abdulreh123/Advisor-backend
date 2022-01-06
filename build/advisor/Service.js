@@ -14,10 +14,12 @@ const Advisormodel = require("../advisor/model");
 const Department = require("../department/model");
 const Student = require("../student/Model");
 const Group = require("../courseGroup/model");
+const CourseRooms = require("../rooms/courseRooms.model");
 const user = require("../auth/model");
 const dayjs = require('dayjs');
-class DepartmentService {
+class AdvisorService {
     constructor() {
+        this.WEEK_DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
         this.hashPassword = (password) => __awaiter(this, void 0, void 0, function* () {
             const salt = yield bcrypt.genSalt(10);
             const hash = yield bcrypt.hash(password, salt);
@@ -90,6 +92,44 @@ class DepartmentService {
                 throw error;
             }
         });
+        this.getTimeTable = (advisorId, year) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const groups = yield Group.findAll({
+                    where: { year: year, lecturerId: advisorId },
+                    include: [{
+                            model: CourseRooms,
+                            as: "CourseRooms",
+                        }]
+                });
+                const timetable = yield Promise.all(this.WEEK_DAYS.map((days) => __awaiter(this, void 0, void 0, function* () {
+                    let weekDay = [];
+                    const data = yield groups.filter((f) => f.CourseRooms.some((o) => days === null || days === void 0 ? void 0 : days.includes(o.day)));
+                    if (data.length > 0) {
+                        const x = yield Promise.all(yield data.map((day) => __awaiter(this, void 0, void 0, function* () {
+                            const table = yield day.CourseRooms.filter((dayt) => dayt.day === days);
+                            const week = yield table.map((time) => {
+                                return {
+                                    name: day.name,
+                                    type: "custom",
+                                    startTime: `2018-02-24T${time.timeStart}`,
+                                    endTime: `2018-02-24T${time.timeEnd}`,
+                                };
+                            });
+                            return week;
+                        })));
+                        weekDay.push(x);
+                    }
+                    const result = {
+                        [`${days}`]: weekDay
+                    };
+                    return result;
+                })));
+                return timetable;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
         //  Update Department
         this.updateAdvisor = (advisorId, data) => __awaiter(this, void 0, void 0, function* () {
             try {
@@ -119,4 +159,4 @@ class DepartmentService {
         });
     }
 }
-exports.default = DepartmentService;
+exports.default = AdvisorService;
