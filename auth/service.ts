@@ -44,12 +44,10 @@ export default class AuthService {
               {
                 model: Advisor,
                 as: "advisor",
-                include: [
-                  {
-                    model: Department,
-                    as: "Department"
-                  },
-              ]
+              },
+              {
+                model: Department,
+                as: "Department"
               },
           ]},
           {
@@ -109,10 +107,11 @@ export default class AuthService {
           username: users.userName,
           name: users.Advisor?.name || users.Student?.name || users.chairman?.name || users.name,
           surname: users.Advisor?.surname || users.Student?.surname || users.chairman?.surname || users.userSuperAdmin,
-          department: users.Advisor?.Department || users.Student?.advisor.Department || users.chairman?.Department || users.userSuperAdmin,
+          department: users.Advisor?.Department || users.Student?.Department || users.chairman?.Department || users.userSuperAdmin,
           status: status,
         },
       };
+      console.log(result)
       return result;
     } catch (error) {
       throw (error);
@@ -144,12 +143,10 @@ export default class AuthService {
               {
                 model: Advisor,
                 as: "advisor",
-                include: [
-                  {
-                    model: Department,
-                    as: "Department"
-                  },
-              ]
+              },
+              {
+                model: Department,
+                as: "Department"
               },
           ]},
           {
@@ -206,7 +203,7 @@ export default class AuthService {
           username: users.userName,
           name: users.Advisor?.name || users.Student?.name || users.chairman?.name || users.name,
           surname: users.Advisor?.surname || users.Student?.surname || users.chairman?.surname || users.userSuperAdmin,
-          department: users.Advisor?.Department || users.Student?.advisor.Department || users.chairman?.Department || users.userSuperAdmin,
+          department: users.Advisor?.Department || users.Student?.Department || users.chairman?.Department || users.userSuperAdmin,
           year:await this.getAcademicYear(),
           status: status,
         },

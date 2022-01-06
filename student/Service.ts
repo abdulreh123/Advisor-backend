@@ -446,7 +446,7 @@ export default class DepartmentService {
             as: "Course",
             where: {
               departmentId: {
-                [Op.or]: [student.advisor.departmentId, 4]
+                [Op.or]: [student.departmentId, 4]
               }
             }
           }
@@ -457,7 +457,7 @@ export default class DepartmentService {
       const allCourses= await Courses.findAll({
         where: {
           departmentId: {
-            [Op.or]: [student.advisor.departmentId, 4]
+            [Op.or]: [student.departmentId, 4]
           }}
       }) 
         //remove courses which are taken

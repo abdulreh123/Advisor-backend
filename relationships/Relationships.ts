@@ -85,6 +85,20 @@ Advisor.hasMany(Student, {
     foreignKey: "advisorId",
     sourceKey: "id",
 });
+Department.hasMany(Student, {
+    as: "Students",
+    onDelete: "CASCADE",
+    hooks: true,
+    foreignKey: "departmentId",
+    sourceKey: "id",
+});
+Student.belongsTo(Department, {
+    as: "Department",
+    onDelete: "CASCADE",
+    hooks: true,
+    foreignKey: "departmentId",
+    sourceKey: "id",
+});
 Courses.hasMany(Group, {
     as: "Groups",
     onDelete: "CASCADE",
