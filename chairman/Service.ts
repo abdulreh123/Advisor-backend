@@ -1,17 +1,28 @@
 
 const chairman = require("./model");
+const bcrypt = require("bcrypt");
 const department = require("../department/model");
 const { Op, Sequelize } = require("sequelize");
 const Courses = require("../courses/model");
 const Student = require("../student/Model");
 const Advisor = require("../advisor/model");
+const user = require("../auth/model")
 
 export default class ChairmanService {
   constructor() { }
+  private hashPassword = async (password: string): Promise<string> => {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+    return hash;
+  };
   //  Create Chairmans
   createChairmans = async (data: any): Promise<any> => {
     try {
       const Chairman = await chairman.create({ ...data });
+      if (data.user) {
+        const password = await this.hashPassword(data.user.password)
+        await user.create({ userName: data.user.userName, password: password, userChairman: Chairman.id })
+      }
       return Chairman;
     } catch (error) {
       throw error;
@@ -21,7 +32,14 @@ export default class ChairmanService {
   //  Get Chairmans
   getChairmans = async (): Promise<any> => {
     try {
-      const Chairman = await chairman.findAll({});
+      const Chairman = await chairman.findAll({
+        include: [
+          {
+            model: department,
+            as: "Department"
+          }
+        ]
+      });
       return Chairman;
     } catch (error) {
       throw error;
