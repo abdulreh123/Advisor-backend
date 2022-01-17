@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = __importDefault(require("./app"));
 //const path = require("path");
 const Routes = require("./routes/index");
-const port = 7000;
+const port = 7001;
 const resources = [
     {
         endpoint: "/api/auth",
