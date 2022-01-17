@@ -68,12 +68,10 @@ class AuthService {
                                 {
                                     model: Advisor,
                                     as: "advisor",
-                                    include: [
-                                        {
-                                            model: Department,
-                                            as: "Department"
-                                        },
-                                    ]
+                                },
+                                {
+                                    model: Department,
+                                    as: "Department"
                                 },
                             ]
                         },
@@ -131,10 +129,11 @@ class AuthService {
                         username: users.userName,
                         name: ((_r = users.Advisor) === null || _r === void 0 ? void 0 : _r.name) || ((_s = users.Student) === null || _s === void 0 ? void 0 : _s.name) || ((_t = users.chairman) === null || _t === void 0 ? void 0 : _t.name) || users.name,
                         surname: ((_u = users.Advisor) === null || _u === void 0 ? void 0 : _u.surname) || ((_v = users.Student) === null || _v === void 0 ? void 0 : _v.surname) || ((_w = users.chairman) === null || _w === void 0 ? void 0 : _w.surname) || users.userSuperAdmin,
-                        department: ((_x = users.Advisor) === null || _x === void 0 ? void 0 : _x.Department) || ((_y = users.Student) === null || _y === void 0 ? void 0 : _y.advisor.Department) || ((_z = users.chairman) === null || _z === void 0 ? void 0 : _z.Department) || users.userSuperAdmin,
+                        department: ((_x = users.Advisor) === null || _x === void 0 ? void 0 : _x.Department) || ((_y = users.Student) === null || _y === void 0 ? void 0 : _y.Department) || ((_z = users.chairman) === null || _z === void 0 ? void 0 : _z.Department) || users.userSuperAdmin,
                         status: status,
                     },
                 };
+                console.log(result);
                 return result;
             }
             catch (error) {
@@ -169,12 +168,10 @@ class AuthService {
                                 {
                                     model: Advisor,
                                     as: "advisor",
-                                    include: [
-                                        {
-                                            model: Department,
-                                            as: "Department"
-                                        },
-                                    ]
+                                },
+                                {
+                                    model: Department,
+                                    as: "Department"
                                 },
                             ]
                         },
@@ -232,7 +229,7 @@ class AuthService {
                         username: users.userName,
                         name: ((_r = users.Advisor) === null || _r === void 0 ? void 0 : _r.name) || ((_s = users.Student) === null || _s === void 0 ? void 0 : _s.name) || ((_t = users.chairman) === null || _t === void 0 ? void 0 : _t.name) || users.name,
                         surname: ((_u = users.Advisor) === null || _u === void 0 ? void 0 : _u.surname) || ((_v = users.Student) === null || _v === void 0 ? void 0 : _v.surname) || ((_w = users.chairman) === null || _w === void 0 ? void 0 : _w.surname) || users.userSuperAdmin,
-                        department: ((_x = users.Advisor) === null || _x === void 0 ? void 0 : _x.Department) || ((_y = users.Student) === null || _y === void 0 ? void 0 : _y.advisor.Department) || ((_z = users.chairman) === null || _z === void 0 ? void 0 : _z.Department) || users.userSuperAdmin,
+                        department: ((_x = users.Advisor) === null || _x === void 0 ? void 0 : _x.Department) || ((_y = users.Student) === null || _y === void 0 ? void 0 : _y.Department) || ((_z = users.chairman) === null || _z === void 0 ? void 0 : _z.Department) || users.userSuperAdmin,
                         year: yield this.getAcademicYear(),
                         status: status,
                     },

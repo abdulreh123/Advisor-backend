@@ -98,7 +98,7 @@ class DepartmentService {
                     let status;
                     const year = yield groups.filter((year) => year.studentscourses.academicYear === group);
                     const approved = year.filter((course) => course.studentscourses.approvedBy !== null);
-                    const totalcrPts = yield approved.map((item) => parseInt(item.studentscourses.CrPts)).reduce((prev, next) => prev + next);
+                    const totalcrPts = yield approved.map((item) => { var _a; return parseInt((_a = item === null || item === void 0 ? void 0 : item.studentscourses) === null || _a === void 0 ? void 0 : _a.CrPts); }).reduce((prev, next) => prev + next);
                     const totalcredit = yield approved.map((item) => parseInt(item.Course.credit)).reduce((prev, next) => prev + next);
                     totalPts = totalPts + totalcrPts;
                     totalcredits = totalcredits + totalcredit;
@@ -428,9 +428,9 @@ class DepartmentService {
             try {
                 const student = yield this.getStudent(studentId);
                 const coursesTaken = yield student.Group.filter((course) => {
-                    var _a, _b;
+                    var _a, _b, _c;
                     return ((_a = course.studentscourses) === null || _a === void 0 ? void 0 : _a.grade) !== null &&
-                        ((_b = course.studentscourses) === null || _b === void 0 ? void 0 : _b.grade) !== "FF";
+                        ((_b = course.studentscourses) === null || _b === void 0 ? void 0 : _b.grade) !== "FF" || ((_c = course.studentscourses) === null || _c === void 0 ? void 0 : _c.academicYear) !== year;
                 }).map((course) => {
                     return course === null || course === void 0 ? void 0 : course.Course.code;
                 });
@@ -445,14 +445,41 @@ class DepartmentService {
                             as: "Course",
                             where: {
                                 departmentId: {
-                                    [Op.or]: [student.advisor.departmentId, 4]
+                                    [Op.or]: [student.departmentId, 4]
                                 }
                             }
                         }
                     ]
                 });
                 if (allGroup.length === 0) {
-                    return [];
+                    const allCourses = yield Courses.findAll({
+                        where: {
+                            departmentId: {
+                                [Op.or]: [student.departmentId, 4]
+                            }
+                        }
+                    });
+                    //remove courses which are taken
+                    const remove = yield allCourses.filter((course) => !coursesTaken.includes(course.code));
+                    const prerequisites = yield remove.filter((course) => coursesTaken.includes(course.prerequisites) || course.prerequisites === null);
+                    const totalcredit = yield prerequisites.map((item) => parseInt(item.credit)).reduce((prev, next) => prev + next);
+                    const prerequisitesId = prerequisites.map((group) => group.id);
+                    const result = yield allCourses.filter((course) => prerequisitesId.includes(course.id));
+                    let credits = 0;
+                    const creditLimit = year.includes('Summer') ? 12 : 21;
+                    const automation = yield result.map((courses) => {
+                        if (totalcredit < creditLimit) {
+                            return courses;
+                        }
+                        else {
+                            credits = credits + courses.credit;
+                            if (credits <= creditLimit) {
+                                return courses;
+                            }
+                        }
+                    });
+                    const removeNull = yield automation.filter((Course) => Course !== undefined);
+                    return removeNull;
                 }
                 else {
                     const CoursesOffered = yield (allGroup === null || allGroup === void 0 ? void 0 : allGroup.map((course) => course.Course));

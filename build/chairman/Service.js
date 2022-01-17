@@ -10,17 +10,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const chairman = require("./model");
+const bcrypt = require("bcrypt");
 const department = require("../department/model");
 const { Op, Sequelize } = require("sequelize");
 const Courses = require("../courses/model");
 const Student = require("../student/Model");
 const Advisor = require("../advisor/model");
+const user = require("../auth/model");
 class ChairmanService {
     constructor() {
+        this.hashPassword = (password) => __awaiter(this, void 0, void 0, function* () {
+            const salt = yield bcrypt.genSalt(10);
+            const hash = yield bcrypt.hash(password, salt);
+            return hash;
+        });
         //  Create Chairmans
         this.createChairmans = (data) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const Chairman = yield chairman.create(Object.assign({}, data));
+                if (data.user) {
+                    const password = yield this.hashPassword(data.user.password);
+                    yield user.create({ userName: data.user.userName, password: password, userChairman: Chairman.id });
+                }
                 return Chairman;
             }
             catch (error) {
@@ -31,7 +42,14 @@ class ChairmanService {
         //  Get Chairmans
         this.getChairmans = () => __awaiter(this, void 0, void 0, function* () {
             try {
-                const Chairman = yield chairman.findAll({});
+                const Chairman = yield chairman.findAll({
+                    include: [
+                        {
+                            model: department,
+                            as: "Department"
+                        }
+                    ]
+                });
                 return Chairman;
             }
             catch (error) {
