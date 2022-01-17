@@ -1,7 +1,7 @@
 import App from "./app";
 //const path = require("path");
 const Routes = require("./routes/index");
-const port: any = 7000;
+const port: any = 7001;
 
 const resources = [
   {
