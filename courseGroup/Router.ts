@@ -14,6 +14,10 @@ const GourseControllers = new GroupController();
 const destroyDepartment = ["super_admin"];
 
 router.get(
+  "/year-active",
+  GourseControllers.getYear
+);
+router.get(
   "/",
   GourseControllers.findAll
 );
@@ -41,6 +45,14 @@ router.put(
 router.post(
   "/create",
   GourseControllers.create
+);
+router.post(
+  "/active-year",
+  GourseControllers.setYear
+);
+router.post(
+  "/offer-courses",
+  GourseControllers.offerCourses
 );
 
 router.delete(

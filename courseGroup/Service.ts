@@ -9,6 +9,7 @@ const CourseRoom = require("../rooms/courseRooms.model");
 const moment = require('moment')
 const momentRange = require('moment-range');
 momentRange.extendMoment(moment);
+import firestoreService from '../firestore/firebase'
 const { Op, Sequelize } = require("sequelize");
 export default class GroupService {
   constructor() { }
@@ -45,10 +46,12 @@ export default class GroupService {
   //  Get Group
   getLecturerGroup = async (lecturerId:number): Promise<any> => {
     try {
+      const year:any =this.getActiveYear()
+      console.log(year)
       const group = await Group.findAll({
-        
         where:{
-          lecturerId:lecturerId
+          lecturerId:lecturerId,
+          year:year.data.year
         },
         include: [
           {
@@ -184,7 +187,72 @@ export default class GroupService {
       throw error;
     }
   };
+      /**
+     * @description Set Time off signatory i.e who signs timeoff printout
+     * @param data
+     */
+       setActiveYear = async (data: any) => {
+        const year = await firestoreService.update(
+            'academic',
+            'qYX8QXS3XW564eKdfPTP',
+            data
+        )
+        return year
+    }
+      /**
+     * @description Set Time off signatory i.e who signs timeoff printout
+     * @param data
+     */
+       getActiveYear = async () => {
+        const year = await firestoreService.get(
+            'academic',
+            'qYX8QXS3XW564eKdfPTP',
+        )
+        return year
+    }
   //  Delete advisor
+  openSemesterCourses = async (
+  ): Promise<any> => {
+    try {
+      let semester
+      const year = await firestoreService.get(
+        'academic',
+        'qYX8QXS3XW564eKdfPTP',
+    )
+      if(year.data.year?.includes("Fall")){
+        semester=[1,3,5,7]
+      }
+      if(year.data.year?.includes("Spring")){
+        semester=[2,4,6,8]
+      }
+      console.log(semester)
+      if(!year.data.status){
+        const courses = await Course.findAll({
+          where:{
+            semester: {
+              [Op.or]: semester,
+            },
+          }
+        })
+        courses.map(async(course:any)=>{
+          const data ={
+            name:course.code,
+            lecturerId :4,
+            courseId:course.id,
+            year:year.data.year
+          }
+          await this.createGroup(data)
+        })
+        await firestoreService.update(
+          'academic',
+          'qYX8QXS3XW564eKdfPTP',
+          {status:true}
+      )
+      }
+    } catch (error) {
+      throw error
+    }
+  };
   deleteGroup = async (
     groupId: number,
   ): Promise<any> => {

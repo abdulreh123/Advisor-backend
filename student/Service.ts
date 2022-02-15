@@ -10,6 +10,7 @@ import GroupService from "../courseGroup/Service";
 const GroupServices = new GroupService();
 const user = require("../auth/model")
 const { Op, Sequelize } = require("sequelize");
+import firestoreService from '../firestore/firebase'
 export default class DepartmentService {
   constructor() { }
   public WEEK_DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
@@ -18,6 +19,13 @@ export default class DepartmentService {
     const hash = await bcrypt.hash(password, salt);
     return hash;
   };
+  private getAcademicYear = async() => {
+    const year = await firestoreService.get(
+      'academic',
+      'qYX8QXS3XW564eKdfPTP'
+  )
+return year.data.year
+  }
   //  Create Student
   createStudent = async (data: any): Promise<any> => {
     try {
@@ -139,6 +147,7 @@ export default class DepartmentService {
   };
   getTimeTable = async (studentId: number, year: string): Promise<any> => {
     try {
+      const year = this.getAcademicYear()
       const result = await Student.findByPk(studentId, {
         include: [
           {

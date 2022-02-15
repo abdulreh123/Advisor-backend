@@ -7,6 +7,7 @@ const dayjs = require('dayjs')
 const chairman = require("../chairman/model");
 const Advisor = require("../advisor/model");
 const Department = require("../department/model");
+import firestoreService from '../firestore/firebase'
 const { Op } = require("sequelize");
 export default class AuthService {
   constructor() { }
@@ -16,19 +17,24 @@ export default class AuthService {
   */
  
    private getAcademicYear = async() => {
-    let year: string =''
-    const month = dayjs().month()
-    const currentyear = dayjs().year()
-    if (month >= 1 && month <= 5) {
-     year =`${currentyear-1}-${currentyear} - Spring`
-    }
-    if (month > 5 && month <= 8) {
-     year =`${currentyear-1}-${currentyear} - Summer`
-    }
-    if (month > 8 || month < 1) {
-     year =`${currentyear}-${currentyear + 1} - Fall`
-    }
-    return year
+    // let year: string =''
+    // const month = dayjs().month()
+    // const currentyear = dayjs().year()
+    // if (month >= 1 && month <= 5) {
+    //  year =`${currentyear-1}-${currentyear} - Spring`
+    // }
+    // if (month > 5 && month <= 8) {
+    //  year =`${currentyear-1}-${currentyear} - Summer`
+    // }
+    // if (month > 8 || month < 1) {
+    //  year =`${currentyear}-${currentyear + 1} - Fall`
+    // }
+    const year = await firestoreService.get(
+              'academic',
+              'qYX8QXS3XW564eKdfPTP'
+          )
+    return year.data.year
+
   }
   async loginViaForm(data: any) {
     let status
