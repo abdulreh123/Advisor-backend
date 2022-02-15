@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt = require("bcrypt");
 const Advisormodel = require("../advisor/model");
@@ -17,6 +20,7 @@ const Group = require("../courseGroup/model");
 const CourseRooms = require("../rooms/courseRooms.model");
 const user = require("../auth/model");
 const dayjs = require('dayjs');
+const firebase_1 = __importDefault(require("../firestore/firebase"));
 class AdvisorService {
     constructor() {
         this.WEEK_DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
@@ -26,19 +30,8 @@ class AdvisorService {
             return hash;
         });
         this.getAcademicYear = () => __awaiter(this, void 0, void 0, function* () {
-            let year = '';
-            const month = dayjs().month();
-            const currentyear = dayjs().year();
-            if (month >= 1 && month <= 5) {
-                year = `${currentyear - 1}-${currentyear} - Spring`;
-            }
-            if (month > 5 && month <= 8) {
-                year = `${currentyear - 1}-${currentyear} - Summer`;
-            }
-            if (month > 8 || month < 1) {
-                year = `${currentyear}-${currentyear + 1} - Fall`;
-            }
-            return year;
+            const year = yield firebase_1.default.get('academic', 'qYX8QXS3XW564eKdfPTP');
+            return year.data.year;
         });
         //  Create Advisor
         this.createAdvisor = (data) => __awaiter(this, void 0, void 0, function* () {
@@ -83,6 +76,9 @@ class AdvisorService {
                         {
                             model: Group,
                             as: "Group",
+                            where: {
+                                year: year
+                            }
                         }
                     ]
                 });
@@ -94,6 +90,7 @@ class AdvisorService {
         });
         this.getTimeTable = (advisorId, year) => __awaiter(this, void 0, void 0, function* () {
             try {
+                const year = yield this.getAcademicYear();
                 const groups = yield Group.findAll({
                     where: { year: year, lecturerId: advisorId },
                     include: [{

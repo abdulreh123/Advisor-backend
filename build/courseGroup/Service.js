@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const Group = require("./model");
 const Student = require("../student/Model");
@@ -18,6 +21,7 @@ const CourseRoom = require("../rooms/courseRooms.model");
 const moment = require('moment');
 const momentRange = require('moment-range');
 momentRange.extendMoment(moment);
+const firebase_1 = __importDefault(require("../firestore/firebase"));
 const { Op, Sequelize } = require("sequelize");
 class GroupService {
     constructor() {
@@ -56,9 +60,12 @@ class GroupService {
         //  Get Group
         this.getLecturerGroup = (lecturerId) => __awaiter(this, void 0, void 0, function* () {
             try {
+                const year = this.getActiveYear();
+                console.log(year);
                 const group = yield Group.findAll({
                     where: {
-                        lecturerId: lecturerId
+                        lecturerId: lecturerId,
+                        year: year.data.year
                     },
                     include: [
                         {
@@ -190,7 +197,59 @@ class GroupService {
                 throw error;
             }
         });
+        /**
+       * @description Set Time off signatory i.e who signs timeoff printout
+       * @param data
+       */
+        this.setActiveYear = (data) => __awaiter(this, void 0, void 0, function* () {
+            const year = yield firebase_1.default.update('academic', 'qYX8QXS3XW564eKdfPTP', data);
+            return year;
+        });
+        /**
+       * @description Set Time off signatory i.e who signs timeoff printout
+       * @param data
+       */
+        this.getActiveYear = () => __awaiter(this, void 0, void 0, function* () {
+            const year = yield firebase_1.default.get('academic', 'qYX8QXS3XW564eKdfPTP');
+            return year;
+        });
         //  Delete advisor
+        this.openSemesterCourses = () => __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
+            try {
+                let semester;
+                const year = yield firebase_1.default.get('academic', 'qYX8QXS3XW564eKdfPTP');
+                if ((_a = year.data.year) === null || _a === void 0 ? void 0 : _a.includes("Fall")) {
+                    semester = [1, 3, 5, 7];
+                }
+                if ((_b = year.data.year) === null || _b === void 0 ? void 0 : _b.includes("Spring")) {
+                    semester = [2, 4, 6, 8];
+                }
+                console.log(semester);
+                if (!year.data.status) {
+                    const courses = yield Course.findAll({
+                        where: {
+                            semester: {
+                                [Op.or]: semester,
+                            },
+                        }
+                    });
+                    courses.map((course) => __awaiter(this, void 0, void 0, function* () {
+                        const data = {
+                            name: course.code,
+                            lecturerId: 4,
+                            courseId: course.id,
+                            year: year.data.year
+                        };
+                        yield this.createGroup(data);
+                    }));
+                    yield firebase_1.default.update('academic', 'qYX8QXS3XW564eKdfPTP', { status: true });
+                }
+            }
+            catch (error) {
+                throw error;
+            }
+        });
         this.deleteGroup = (groupId) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const group = yield Group.findOne({

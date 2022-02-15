@@ -24,6 +24,7 @@ const Service_1 = __importDefault(require("../courseGroup/Service"));
 const GroupServices = new Service_1.default();
 const user = require("../auth/model");
 const { Op, Sequelize } = require("sequelize");
+const firebase_1 = __importDefault(require("../firestore/firebase"));
 class DepartmentService {
     constructor() {
         this.WEEK_DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
@@ -31,6 +32,10 @@ class DepartmentService {
             const salt = yield bcrypt.genSalt(10);
             const hash = yield bcrypt.hash(password, salt);
             return hash;
+        });
+        this.getAcademicYear = () => __awaiter(this, void 0, void 0, function* () {
+            const year = yield firebase_1.default.get('academic', 'qYX8QXS3XW564eKdfPTP');
+            return year.data.year;
         });
         //  Create Student
         this.createStudent = (data) => __awaiter(this, void 0, void 0, function* () {
@@ -157,6 +162,7 @@ class DepartmentService {
         });
         this.getTimeTable = (studentId, year) => __awaiter(this, void 0, void 0, function* () {
             try {
+                const year = this.getAcademicYear();
                 const result = yield Student.findByPk(studentId, {
                     include: [
                         {

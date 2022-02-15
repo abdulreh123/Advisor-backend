@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const user = require("./model");
 const bcrypt = require("bcrypt");
@@ -17,6 +20,7 @@ const dayjs = require('dayjs');
 const chairman = require("../chairman/model");
 const Advisor = require("../advisor/model");
 const Department = require("../department/model");
+const firebase_1 = __importDefault(require("../firestore/firebase"));
 const { Op } = require("sequelize");
 class AuthService {
     constructor() {
@@ -25,19 +29,20 @@ class AuthService {
         * @param data { companyEmail:string, password:string }
         */
         this.getAcademicYear = () => __awaiter(this, void 0, void 0, function* () {
-            let year = '';
-            const month = dayjs().month();
-            const currentyear = dayjs().year();
-            if (month >= 1 && month <= 5) {
-                year = `${currentyear - 1}-${currentyear} - Spring`;
-            }
-            if (month > 5 && month <= 8) {
-                year = `${currentyear - 1}-${currentyear} - Summer`;
-            }
-            if (month > 8 || month < 1) {
-                year = `${currentyear}-${currentyear + 1} - Fall`;
-            }
-            return year;
+            // let year: string =''
+            // const month = dayjs().month()
+            // const currentyear = dayjs().year()
+            // if (month >= 1 && month <= 5) {
+            //  year =`${currentyear-1}-${currentyear} - Spring`
+            // }
+            // if (month > 5 && month <= 8) {
+            //  year =`${currentyear-1}-${currentyear} - Summer`
+            // }
+            // if (month > 8 || month < 1) {
+            //  year =`${currentyear}-${currentyear + 1} - Fall`
+            // }
+            const year = yield firebase_1.default.get('academic', 'qYX8QXS3XW564eKdfPTP');
+            return year.data.year;
         });
         //  Generate jwt token
         this.generateToken = (data) => __awaiter(this, void 0, void 0, function* () {

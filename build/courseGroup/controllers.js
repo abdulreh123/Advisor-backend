@@ -74,6 +74,60 @@ class AdvisorController extends Service_1.default {
             }
         });
         /**
+         * @description Set Time Off Signatory
+         * @param req
+         * @param res
+         */
+        this.setYear = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const data = yield this.setActiveYear(req.body);
+                res.status(200).json({ success: true, data: data });
+            }
+            catch (error) {
+                res.status(400).json({
+                    success: false,
+                    data: [],
+                    message: error.message,
+                });
+            }
+        });
+        /**
+         * @description Set Time Off Signatory
+         * @param req
+         * @param res
+         */
+        this.getYear = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const data = yield this.getActiveYear();
+                res.status(200).json({ success: true, data: data });
+            }
+            catch (error) {
+                res.status(400).json({
+                    success: false,
+                    data: [],
+                    message: error.message,
+                });
+            }
+        });
+        /**
+         * @description Set Time Off Signatory
+         * @param req
+         * @param res
+         */
+        this.offerCourses = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const data = yield this.openSemesterCourses();
+                res.status(200).json({ success: true, data: data });
+            }
+            catch (error) {
+                res.status(400).json({
+                    success: false,
+                    data: [],
+                    message: error.message,
+                });
+            }
+        });
+        /**
          * @desc  Get single department
          * @param req Request
          * @param res Response

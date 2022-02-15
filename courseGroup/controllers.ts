@@ -69,7 +69,7 @@ export default class AdvisorController extends GroupService{
         req.body
     )
       res.status(200).json({ success: true, data: data });
-    } catch (error:any) {
+    } catch (error) {
       res.status(400).json({
         success: false,
         data: [],
@@ -86,7 +86,7 @@ export default class AdvisorController extends GroupService{
     try {
       const data = await this.getActiveYear()
       res.status(200).json({ success: true, data: data });
-    } catch (error:any) {
+    } catch (error) {
       res.status(400).json({
         success: false,
         data: [],
@@ -103,7 +103,7 @@ export default class AdvisorController extends GroupService{
     try {
       const data = await this.openSemesterCourses()
       res.status(200).json({ success: true, data: data });
-    } catch (error:any) {
+    } catch (error) {
       res.status(400).json({
         success: false,
         data: [],
