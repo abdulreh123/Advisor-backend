@@ -66,7 +66,7 @@ class AdvisorService {
         //  Get Advisor
         this.getAdvisor = (advisorId) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const year = yield this.getAcademicYear();
+                // const year = await this.getAcademicYear()
                 const result = yield Advisormodel.findByPk(advisorId, {
                     include: [
                         {
@@ -76,9 +76,6 @@ class AdvisorService {
                         {
                             model: Group,
                             as: "Group",
-                            where: {
-                                year: year
-                            }
                         }
                     ]
                 });

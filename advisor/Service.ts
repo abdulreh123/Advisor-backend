@@ -54,7 +54,7 @@ return year.data.year
   //  Get Advisor
   getAdvisor = async (advisorId: number): Promise<any> => {
     try {
-      const year = await this.getAcademicYear()
+     // const year = await this.getAcademicYear()
       const result = await Advisormodel.findByPk(advisorId, {
         include: [
           {
@@ -64,9 +64,6 @@ return year.data.year
           {
             model: Group,
             as: "Group",
-            where:{
-              year:year
-            }
           }
         ]
       });
