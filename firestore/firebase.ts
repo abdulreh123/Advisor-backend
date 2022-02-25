@@ -2,7 +2,7 @@
 const admin = require("firebase-admin");
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-const serviceAccount = require('./firestore.json')
+import serviceAccount from './firestore.json';
 
 class FirestoreService {
     database: any;

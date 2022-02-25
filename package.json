@@ -5,6 +5,8 @@
     "main": "server.js",
     "homepage": ".",
     "dependencies": {
+        "@fast-csv/format": "^4.3.5",
+        "@fast-csv/parse": "^4.3.6",
         "@types/bcryptjs": "^2.4.2",
         "@types/config": "0.0.36",
         "@types/cors": "^2.8.10",

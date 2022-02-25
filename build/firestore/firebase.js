@@ -14,13 +14,16 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     }
     return privateMap.get(receiver);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 var _getResponse;
 Object.defineProperty(exports, "__esModule", { value: true });
 // Import the functions you need from the SDKs you need
 const admin = require("firebase-admin");
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-const serviceAccount = require('./firestore.json');
+const firestore_json_1 = __importDefault(require("./firestore.json"));
 class FirestoreService {
     constructor() {
         _getResponse.set(this, (success, data = {}) => {
@@ -28,7 +31,7 @@ class FirestoreService {
                 return { success, data };
             return { success, error: data };
         });
-        let credential = { credential: admin.credential.cert(serviceAccount) };
+        let credential = { credential: admin.credential.cert(firestore_json_1.default) };
         admin.initializeApp(credential);
         this.database = admin.firestore();
     }

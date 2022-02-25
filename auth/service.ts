@@ -117,7 +117,8 @@ export default class AuthService {
           status: status,
         },
       };
-      console.log(result)
+      
+      console.log(users)
       return result;
     } catch (error) {
       throw (error);
