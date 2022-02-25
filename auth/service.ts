@@ -78,6 +78,8 @@ export default class AuthService {
           },
         ]
       });
+      
+      console.log(users)
       if (!users) throw Error("Invalid Credentials");
       const comparePassword = await this.comparePassword(
         password,
@@ -117,8 +119,6 @@ export default class AuthService {
           status: status,
         },
       };
-      
-      console.log(users)
       return result;
     } catch (error) {
       throw (error);
