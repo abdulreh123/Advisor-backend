@@ -2,7 +2,7 @@ import Sequelize = require("sequelize");
 const sequelize = require("../helpers/Connection");
 
 const Departmentmodel = sequelize.define(
-  "departments",
+  "faculties",
   {
     id: {
       type: Sequelize.INTEGER,
@@ -15,17 +15,9 @@ const Departmentmodel = sequelize.define(
       allowNull: false,
       unique: true,
     },
-    chairmanId: {
-      type: Sequelize.INTEGER,
-      allowNull: true,
-    },
-    facultyId: {
-      type: Sequelize.INTEGER,
-      allowNull: true,
-    },
   },
   {
-    tableName: "departments",
+    tableName: "faculties",
     deletedAt: "deletedAt",
     paranoid: true,
     timestamps: true,
