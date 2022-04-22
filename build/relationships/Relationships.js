@@ -13,6 +13,20 @@ const Payments = require("../payments/Model");
 const CourseRooms = require("../rooms/courseRooms.model");
 const Session = require("../helpers/session");
 const Annoucementmodel = require("../annoucements/model");
+const FacultyModel = require("../faculties/model");
+const notification = require("../notifications/model");
+FacultyModel.hasMany(Department, {
+    as: "Departments",
+    onDelete: "CASCADE",
+    hooks: true,
+    foreignKey: "facultyId",
+    sourceKey: "id",
+});
+Department.belongsTo(FacultyModel, {
+    as: "Faculty",
+    foreignKey: "facultyId",
+    sourceKey: "id",
+});
 Department.hasMany(Courses, {
     as: "courses",
     onDelete: "CASCADE",

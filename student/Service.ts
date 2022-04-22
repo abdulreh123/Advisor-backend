@@ -3,6 +3,7 @@ const Advisormodel = require("../advisor/model");
 const Annoucementmodel = require("../annoucements/model");
 const Student = require("./Model");
 const StudentCourses = require("./StudentCourses.model");
+const Notification = require("../notifications/model");
 const Courses = require("../courses/model");
 const CourseRooms = require("../rooms/courseRooms.model");
 const Group = require("../courseGroup/model");
@@ -147,7 +148,7 @@ return year.data.year
   };
   getTimeTable = async (studentId: number, year: string): Promise<any> => {
     try {
-      const year = this.getAcademicYear()
+      const year = await this.getAcademicYear()
       const result = await Student.findByPk(studentId, {
         include: [
           {
@@ -344,6 +345,13 @@ return year.data.year
           }
         }))
       }
+      if(data.type==="add"){
+        if (status === 'Student') {
+          await Notification.create({ content: `${student.name} courses are waiting for your approval`, receiver: student.advisorId, type: "normal" })
+        }else{
+          await Notification.create({ content: `Your courses has been approved`, receiver: student.userId, type: "normal" })
+        }
+      }
       if (data.type == "remove") {
         await data.courses.map(async (course: number) => {
           await StudentCourses.destroy({ where: { studentId: studentId, courseGroupId: course, grade: null } })
@@ -385,6 +393,7 @@ return year.data.year
         { where: { studentId: studentId, courseGroupId: courseId } }
       );
       const student = await this.getStudent(studentId);
+      await Notification.create({ content: `${course.Course.name} grades has been uploaded`, receiver: student.userId, type: "normal" })
       return student;
     } catch (error) {
       throw error;

@@ -102,7 +102,6 @@ class AuthService {
                         },
                     ]
                 });
-                console.log(users);
                 if (!users)
                     throw Error("Invalid Credentials");
                 const comparePassword = yield this.comparePassword(password, users.password);

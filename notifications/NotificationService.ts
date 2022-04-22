@@ -3,9 +3,8 @@ const Notification = require("./model");
 const dayjs = require("dayjs");
 //import { io } from "socket.io-client";
 const env = process.env.NODE_ENV || "development";
-const config = require("../config/config")[env];
 
-class NotificationService {
+export default  class NotificationService  {
   // Create Notification
   public createNotification = async (data: any): Promise<any> => {
     try {
@@ -62,19 +61,25 @@ class NotificationService {
       //   where: { employeeID: employeeID },
       //   attributes: ["systemNotificationsStatus"],
       // });
+      // const notifications = await Notification.findAll({
+      //   where: {
+      //     [Op.and]: [
+      //       { [Op.or]: [{ receiver: employeeID }, { type: "system" }] },
+      //     //  { createdAt: { [Op.gte]: last7 } },
+      //     ],
+      //     [Op.or]: [
+      //       { release_date: null },
+      //    //   { release_date: { [Op.lte]: today } },
+      //     ],
+      //   },
+      //   order: [["id", "DESC"]],
+      // });
       const notifications = await Notification.findAll({
-        where: {
-          [Op.and]: [
-            { [Op.or]: [{ receiver: employeeID }, { type: "system" }] },
-            { createdAt: { [Op.gte]: last7 } },
-          ],
-          [Op.or]: [
-            { release_date: null },
-            { release_date: { [Op.lte]: today } },
-          ],
-        },
-        order: [["id", "DESC"]],
-      });
+        where:{
+          receiver: employeeID ,
+          createdAt: { [Op.gte]: last7 }
+        }
+      })
       const data = {
         notifications: notifications,
       };
@@ -112,4 +117,4 @@ class NotificationService {
   };
 }
 
-export default new NotificationService();
+

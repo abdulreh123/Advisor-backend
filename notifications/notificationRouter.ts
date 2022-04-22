@@ -1,4 +1,4 @@
-import express from "express";
+import express = require("express");
 import notificationController from "./notification.controller";
 
 const NotificationController = new notificationController();
@@ -17,4 +17,4 @@ router.get("/receiver/:employeeID", NotificationController.notificationsByReceiv
 //Get by Notification Id
 router.get("/:notificationID", NotificationController.notificationById);
 
-export default router;
+module.exports = router;

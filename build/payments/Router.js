@@ -7,6 +7,7 @@ const express = require("express");
 const controllers_1 = __importDefault(require("./controllers"));
 const router = express.Router();
 const PaymentControllers = new controllers_1.default();
+// import Middlewares from "../helpers/Middlewares";
 //const middleware = new Middlewares();
 //router.use(Middlewares.auth);
 // const seeDepartment = ["super_admin","can_see_department"];

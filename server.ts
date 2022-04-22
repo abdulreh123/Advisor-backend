@@ -49,6 +49,10 @@ const resources = [
     router: Routes.annoucementRoutes,
   },
   {
+    endpoint: "/api/notification",
+    router: Routes.notificationRoutes,
+  },
+  {
     endpoint: "/api",
     router: (req: any, res: any) => {
       res.status(200).json("Advisor REST API");

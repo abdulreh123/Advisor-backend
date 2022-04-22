@@ -18,6 +18,10 @@ const Departmentmodel = sequelize.define("departments", {
         type: Sequelize.INTEGER,
         allowNull: true,
     },
+    facultyId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+    },
 }, {
     tableName: "departments",
     deletedAt: "deletedAt",

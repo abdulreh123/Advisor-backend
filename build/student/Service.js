@@ -17,6 +17,7 @@ const Advisormodel = require("../advisor/model");
 const Annoucementmodel = require("../annoucements/model");
 const Student = require("./Model");
 const StudentCourses = require("./StudentCourses.model");
+const Notification = require("../notifications/model");
 const Courses = require("../courses/model");
 const CourseRooms = require("../rooms/courseRooms.model");
 const Group = require("../courseGroup/model");
@@ -162,7 +163,7 @@ class DepartmentService {
         });
         this.getTimeTable = (studentId, year) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const year = this.getAcademicYear();
+                const year = yield this.getAcademicYear();
                 const result = yield Student.findByPk(studentId, {
                     include: [
                         {
@@ -354,6 +355,14 @@ class DepartmentService {
                         }
                     })));
                 }
+                if (data.type === "add") {
+                    if (status === 'Student') {
+                        yield Notification.create({ content: `${student.name} courses are waiting for your approval`, receiver: student.advisorId, type: "normal" });
+                    }
+                    else {
+                        yield Notification.create({ content: `Your courses has been approved`, receiver: student.userId, type: "normal" });
+                    }
+                }
                 if (data.type == "remove") {
                     yield data.courses.map((course) => __awaiter(this, void 0, void 0, function* () {
                         yield StudentCourses.destroy({ where: { studentId: studentId, courseGroupId: course, grade: null } });
@@ -387,6 +396,7 @@ class DepartmentService {
                     CrPts: points
                 }, { where: { studentId: studentId, courseGroupId: courseId } });
                 const student = yield this.getStudent(studentId);
+                yield Notification.create({ content: `${course.Course.name} grades has been uploaded`, receiver: student.userId, type: "normal" });
                 return student;
             }
             catch (error) {

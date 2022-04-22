@@ -1,5 +1,5 @@
-const notificationService = require("./NotificationService");
-export default class NotificationController {
+import NotificationService from './NotificationService'
+export default class NotificationController extends NotificationService {
    /**
     * @desc  Add a notification
     * @param req Request
@@ -7,9 +7,9 @@ export default class NotificationController {
     */
     create = async (req:any, res:any) => {
         try {
-            const notification = await notificationService.createNotification(req.body);
+            const notification = await this.createNotification(req.body);
             res.status(200).json({ success: true, data: notification });
-        } catch (error: any) {
+        } catch (error) {
             res.status(400).json({
                 success: false,
                 data: [],
@@ -26,9 +26,9 @@ export default class NotificationController {
     update = async (req:any, res:any) => {
         try {
             const { notificationIDs } = req.params;
-            const notifications = await notificationService.patchNotification(notificationIDs, req.body);
+            const notifications = await this.patchNotification(notificationIDs, req.body);
             res.status(200).json({ success: true, data: notifications });
-        } catch (error: any) {
+        } catch (error) {
             res.status(400).json({
                 success: false,
                 data: [],
@@ -45,9 +45,9 @@ export default class NotificationController {
     delete = async (req:any, res:any) => {
         try {
             const { notificationID } = req.params;
-            const notification = await notificationService.deleteNotification(notificationID);
+            const notification = await this.deleteNotification(notificationID);
             res.status(200).json({ success: true, data: notification });
-        } catch (error: any) {
+        } catch (error) {
             res.status(400).json({
                 success: false,
                 data: [],
@@ -64,9 +64,9 @@ export default class NotificationController {
     notificationsByReceiver = async (req:any, res:any) => {
         try{
             const { employeeID } = req.params;
-            const notification = await notificationService.getNotificationsByReceiver(employeeID);
+            const notification = await this.getNotificationsByReceiver(employeeID);
             res.status(200).json({ success: true, data: notification });
-        } catch (error: any) {
+        } catch (error) {
             res.status(400).json({
                 success: false,
                 data: [],
@@ -83,9 +83,9 @@ export default class NotificationController {
     notificationsByType = async (req:any, res:any) => {
         try{
             const { type } = req.params;
-            const notification = await notificationService.getNotificationsByType(type);
+            const notification = await this.getNotificationsByType(type);
             res.status(200).json({ success: true, data: notification });
-        } catch (error: any) {
+        } catch (error) {
             res.status(400).json({
                 success: false,
                 data: [],
@@ -102,9 +102,9 @@ export default class NotificationController {
      notificationById = async (req:any, res:any) => {
         try{
             const { notificationID } = req.params;
-            const notification = await notificationService.getNotificationById(notificationID);
+            const notification = await this.getNotificationById(notificationID);
             res.status(200).json({ success: true, data: notification });
-        } catch (error: any) {
+        } catch (error) {
             res.status(400).json({
                 success: false,
                 data: [],

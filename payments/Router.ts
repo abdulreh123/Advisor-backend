@@ -2,7 +2,7 @@ import express = require("express");
 import PaymentController from "./controllers";
 const router = express.Router();
 const PaymentControllers = new PaymentController();
-import Middlewares from "../helpers/Middlewares";
+// import Middlewares from "../helpers/Middlewares";
 //const middleware = new Middlewares();
 
 //router.use(Middlewares.auth);
