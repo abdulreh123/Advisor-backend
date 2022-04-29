@@ -28,14 +28,7 @@ class FacultyService {
         //  Get Facultys
         this.getFaculties = () => __awaiter(this, void 0, void 0, function* () {
             try {
-                const faculties = yield FacultyModel.findAll({
-                    include: [
-                        {
-                            model: Chairman,
-                            as: "chairman"
-                        }
-                    ]
-                });
+                const faculties = yield FacultyModel.findAll({});
                 return faculties;
             }
             catch (error) {

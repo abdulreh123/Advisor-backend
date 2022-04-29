@@ -11,3 +11,4 @@ exports.roomRoutes = require('../rooms/Router');
 exports.paymentRoutes = require('../payments/Router');
 exports.annoucementRoutes = require('../annoucements/Router');
 exports.notificationRoutes = require('../notifications/notificationRouter');
+exports.facultyRoutes = require('../faculties/Router');

@@ -18,14 +18,7 @@ export default class FacultyService {
   //  Get Facultys
   getFaculties = async (): Promise<any> => {
     try {
-      const faculties = await FacultyModel.findAll({ 
-        include:[
-          {
-            model:Chairman,
-            as: "chairman"
-          }
-        ]
-      });
+      const faculties = await FacultyModel.findAll({});
       return faculties;
     } catch (error) {
       throw error;
