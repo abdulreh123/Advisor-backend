@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const Advisormodel = require("../advisor/model");
 const Annoucementmodel = require("../annoucements/model");
+const departmentModel = require("../department/model");
 const Student = require("./Model");
 const StudentCourses = require("./StudentCourses.model");
 const Notification = require("../notifications/model");
@@ -130,6 +131,10 @@ return year.data.year
           {
             model: Advisormodel,
             as: "advisor"
+          },
+          {
+            model: departmentModel,
+            as: "Department"
           },
           {
             model: Group,
@@ -303,6 +308,10 @@ return year.data.year
         { where: { id: studentId } }
       );
       const department = await this.getStudent(studentId);
+      console.log(data.englishScore)
+      if(data.englishScore<60){
+       await Student.update({departmentId:5},{where:{id:studentId}})
+      }
       return department;
     } catch (error) {
       throw error;
@@ -449,6 +458,7 @@ return year.data.year
   ): Promise<any> => {
     try {
       const student = await this.getStudent(studentId);
+      const department = await departmentModel.findByPk(student.departmentId);
       const coursesTaken = await student.Group.filter((course: any) => course.studentscourses?.grade !== null &&
         course.studentscourses?.grade !== "FF" || course.studentscourses?.academicYear !==year ).map((course: any) => {
           return course?.Course.code
@@ -463,9 +473,12 @@ return year.data.year
             model: Courses,
             as: "Course",
             where: {
+            [Op.and]:{
               departmentId: {
-                [Op.or]: [student.departmentId, 4]
-              }
+                [Op.or]: [student.departmentId,4]
+              },
+              facultyId: department.facultyId
+            }
             }
           }
         ]
@@ -474,9 +487,13 @@ return year.data.year
       if(allGroup.length===0){
       const allCourses= await Courses.findAll({
         where: {
-          departmentId: {
-            [Op.or]: [student.departmentId, 4]
-          }}
+          [Op.and]:{
+            departmentId: {
+              [Op.or]: [student.departmentId,4]
+            },
+            facultyId: department.facultyId
+          }
+          }
       }) 
         //remove courses which are taken
         const remove = await allCourses.filter((course: any) => !coursesTaken.includes(course.code))

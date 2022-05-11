@@ -6,6 +6,7 @@ const Student = require("../student/Model");
 const dayjs = require('dayjs')
 const chairman = require("../chairman/model");
 const Advisor = require("../advisor/model");
+const faculty = require("../faculties/model");
 const Department = require("../department/model");
 import firestoreService from '../firestore/firebase'
 const { Op } = require("sequelize");
@@ -53,7 +54,13 @@ export default class AuthService {
               },
               {
                 model: Department,
-                as: "Department"
+                as: "Department",
+                include: [
+                  {
+                    model: faculty,
+                    as: "Faculty"
+                  },
+              ]
               },
           ]},
           {
@@ -62,7 +69,13 @@ export default class AuthService {
             include: [
               {
                 model: Department,
-                as: "Department"
+                as: "Department",
+                include: [
+                  {
+                    model: faculty,
+                    as: "Faculty"
+                  },
+              ]
               },
           ]
           },
@@ -72,7 +85,13 @@ export default class AuthService {
             include: [
               {
                 model: Department,
-                as: "Department"
+                as: "Department",
+                include: [
+                  {
+                    model: faculty,
+                    as: "Faculty"
+                  },
+              ]
               },
           ]
           },
@@ -115,6 +134,7 @@ export default class AuthService {
           name: users.Advisor?.name || users.Student?.name || users.chairman?.name || users.name,
           surname: users.Advisor?.surname || users.Student?.surname || users.chairman?.surname || users.userSuperAdmin,
           department: users.Advisor?.Department || users.Student?.Department || users.chairman?.Department || users.userSuperAdmin,
+          faculty: users.Advisor?.Department?.Faculty || users.Student?.Department.Faculty || users.chairman?.Department.Faculty || users.userSuperAdmin,
           status: status,
         },
       };
@@ -152,7 +172,13 @@ export default class AuthService {
               },
               {
                 model: Department,
-                as: "Department"
+                as: "Department",
+                include: [
+                  {
+                    model: faculty,
+                    as: "Faculty"
+                  },
+              ]
               },
           ]},
           {
@@ -161,7 +187,13 @@ export default class AuthService {
             include: [
               {
                 model: Department,
-                as: "Department"
+                as: "Department",
+                include: [
+                  {
+                    model: faculty,
+                    as: "Faculty"
+                  },
+              ]
               },
           ]
           },
@@ -171,7 +203,13 @@ export default class AuthService {
             include: [
               {
                 model: Department,
-                as: "Department"
+                as: "Department",
+                include: [
+                  {
+                    model: faculty,
+                    as: "Faculty"
+                  },
+              ]
               },
           ]
           },
@@ -210,6 +248,7 @@ export default class AuthService {
           name: users.Advisor?.name || users.Student?.name || users.chairman?.name || users.name,
           surname: users.Advisor?.surname || users.Student?.surname || users.chairman?.surname || users.userSuperAdmin,
           department: users.Advisor?.Department || users.Student?.Department || users.chairman?.Department || users.userSuperAdmin,
+          faculty: users.Advisor?.Department?.Faculty || users.Student?.Department.Faculty || users.chairman?.Department.Faculty || users.userSuperAdmin,
           year:await this.getAcademicYear(),
           status: status,
         },

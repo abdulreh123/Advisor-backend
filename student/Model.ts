@@ -35,6 +35,14 @@ const Studentmodel = sequelize.define(
       type: Sequelize.INTEGER,
     //  allowNull: false,
     },
+    englishScore: {
+      type: Sequelize.INTEGER,
+    //  allowNull: false,
+    },
+    englishScore2: {
+      type: Sequelize.INTEGER,
+    //  allowNull: false,
+    },
     advisorId: {
         type: Sequelize.INTEGER,
       },

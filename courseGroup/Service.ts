@@ -148,6 +148,7 @@ export default class GroupService {
   //  Get group
   getDepartmentGroup = async (departmentId: number): Promise<any> => {
     try {
+      const department = await Department.findByPk(departmentId);
       const group = await Group.findAll({
         include: [
           {
@@ -157,12 +158,14 @@ export default class GroupService {
           {
             model: Course,
             as: "Course",
-            where:{
-              
-              departmentId: {
-                [Op.or]: [departmentId, 4]
-              }
-            }
+              where: {
+                [Op.and]:{
+                  departmentId: {
+                    [Op.or]: [departmentId,4]
+                  },
+                  facultyId: department.facultyId
+                }
+                }
           }
         ]
       });
