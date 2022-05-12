@@ -22,6 +22,10 @@ const Departmentmodel = sequelize.define("departments", {
         type: Sequelize.INTEGER,
         allowNull: true,
     },
+    english: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+    },
 }, {
     tableName: "departments",
     deletedAt: "deletedAt",

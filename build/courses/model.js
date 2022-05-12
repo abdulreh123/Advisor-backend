@@ -40,6 +40,10 @@ const Coursesmodel = sequelize.define("courses", {
     departmentId: {
         type: Sequelize.INTEGER,
         allowNull: false,
+    },
+    facultyId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
     }
 }, {
     tableName: "courses",

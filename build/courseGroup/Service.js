@@ -163,6 +163,7 @@ class GroupService {
         //  Get group
         this.getDepartmentGroup = (departmentId) => __awaiter(this, void 0, void 0, function* () {
             try {
+                const department = yield Department.findByPk(departmentId);
                 const group = yield Group.findAll({
                     include: [
                         {
@@ -173,8 +174,11 @@ class GroupService {
                             model: Course,
                             as: "Course",
                             where: {
-                                departmentId: {
-                                    [Op.or]: [departmentId, 4]
+                                [Op.and]: {
+                                    departmentId: {
+                                        [Op.or]: [departmentId, 4]
+                                    },
+                                    facultyId: department.facultyId
                                 }
                             }
                         }

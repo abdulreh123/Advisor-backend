@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt = require("bcrypt");
 const Advisormodel = require("../advisor/model");
 const Annoucementmodel = require("../annoucements/model");
+const departmentModel = require("../department/model");
 const Student = require("./Model");
 const StudentCourses = require("./StudentCourses.model");
 const Notification = require("../notifications/model");
@@ -144,6 +145,10 @@ class DepartmentService {
                         {
                             model: Advisormodel,
                             as: "advisor"
+                        },
+                        {
+                            model: departmentModel,
+                            as: "Department"
                         },
                         {
                             model: Group,
@@ -311,6 +316,10 @@ class DepartmentService {
             try {
                 yield Student.update(Object.assign({}, data), { where: { id: studentId } });
                 const department = yield this.getStudent(studentId);
+                console.log(data.englishScore);
+                if (data.englishScore < 60) {
+                    yield Student.update({ departmentId: 5 }, { where: { id: studentId } });
+                }
                 return department;
             }
             catch (error) {
@@ -443,6 +452,7 @@ class DepartmentService {
         this.AutomateSelection = (studentId, year) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const student = yield this.getStudent(studentId);
+                const department = yield departmentModel.findByPk(student.departmentId);
                 const coursesTaken = yield student.Group.filter((course) => {
                     var _a, _b, _c;
                     return ((_a = course.studentscourses) === null || _a === void 0 ? void 0 : _a.grade) !== null &&
@@ -460,8 +470,11 @@ class DepartmentService {
                             model: Courses,
                             as: "Course",
                             where: {
-                                departmentId: {
-                                    [Op.or]: [student.departmentId, 4]
+                                [Op.and]: {
+                                    departmentId: {
+                                        [Op.or]: [student.departmentId, 4]
+                                    },
+                                    facultyId: department.facultyId
                                 }
                             }
                         }
@@ -470,8 +483,11 @@ class DepartmentService {
                 if (allGroup.length === 0) {
                     const allCourses = yield Courses.findAll({
                         where: {
-                            departmentId: {
-                                [Op.or]: [student.departmentId, 4]
+                            [Op.and]: {
+                                departmentId: {
+                                    [Op.or]: [student.departmentId, 4]
+                                },
+                                facultyId: department.facultyId
                             }
                         }
                     });

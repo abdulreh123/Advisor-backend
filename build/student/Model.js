@@ -33,6 +33,12 @@ const Studentmodel = sequelize.define("students", {
     departmentId: {
         type: Sequelize.INTEGER,
     },
+    englishScore: {
+        type: Sequelize.INTEGER,
+    },
+    englishScore2: {
+        type: Sequelize.INTEGER,
+    },
     advisorId: {
         type: Sequelize.INTEGER,
     },

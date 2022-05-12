@@ -19,6 +19,7 @@ const Student = require("../student/Model");
 const dayjs = require('dayjs');
 const chairman = require("../chairman/model");
 const Advisor = require("../advisor/model");
+const faculty = require("../faculties/model");
 const Department = require("../department/model");
 const firebase_1 = __importDefault(require("../firestore/firebase"));
 const { Op } = require("sequelize");
@@ -58,7 +59,7 @@ class AuthService {
         });
     }
     loginViaForm(data) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3;
         return __awaiter(this, void 0, void 0, function* () {
             let status;
             try {
@@ -76,7 +77,13 @@ class AuthService {
                                 },
                                 {
                                     model: Department,
-                                    as: "Department"
+                                    as: "Department",
+                                    include: [
+                                        {
+                                            model: faculty,
+                                            as: "Faculty"
+                                        },
+                                    ]
                                 },
                             ]
                         },
@@ -86,7 +93,13 @@ class AuthService {
                             include: [
                                 {
                                     model: Department,
-                                    as: "Department"
+                                    as: "Department",
+                                    include: [
+                                        {
+                                            model: faculty,
+                                            as: "Faculty"
+                                        },
+                                    ]
                                 },
                             ]
                         },
@@ -96,7 +109,13 @@ class AuthService {
                             include: [
                                 {
                                     model: Department,
-                                    as: "Department"
+                                    as: "Department",
+                                    include: [
+                                        {
+                                            model: faculty,
+                                            as: "Faculty"
+                                        },
+                                    ]
                                 },
                             ]
                         },
@@ -135,6 +154,7 @@ class AuthService {
                         name: ((_r = users.Advisor) === null || _r === void 0 ? void 0 : _r.name) || ((_s = users.Student) === null || _s === void 0 ? void 0 : _s.name) || ((_t = users.chairman) === null || _t === void 0 ? void 0 : _t.name) || users.name,
                         surname: ((_u = users.Advisor) === null || _u === void 0 ? void 0 : _u.surname) || ((_v = users.Student) === null || _v === void 0 ? void 0 : _v.surname) || ((_w = users.chairman) === null || _w === void 0 ? void 0 : _w.surname) || users.userSuperAdmin,
                         department: ((_x = users.Advisor) === null || _x === void 0 ? void 0 : _x.Department) || ((_y = users.Student) === null || _y === void 0 ? void 0 : _y.Department) || ((_z = users.chairman) === null || _z === void 0 ? void 0 : _z.Department) || users.userSuperAdmin,
+                        faculty: ((_1 = (_0 = users.Advisor) === null || _0 === void 0 ? void 0 : _0.Department) === null || _1 === void 0 ? void 0 : _1.Faculty) || ((_2 = users.Student) === null || _2 === void 0 ? void 0 : _2.Department.Faculty) || ((_3 = users.chairman) === null || _3 === void 0 ? void 0 : _3.Department.Faculty) || users.userSuperAdmin,
                         status: status,
                     },
                 };
@@ -156,7 +176,7 @@ class AuthService {
   * @param param
   */
     verifyUser(userName) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3;
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let status;
@@ -175,7 +195,13 @@ class AuthService {
                                 },
                                 {
                                     model: Department,
-                                    as: "Department"
+                                    as: "Department",
+                                    include: [
+                                        {
+                                            model: faculty,
+                                            as: "Faculty"
+                                        },
+                                    ]
                                 },
                             ]
                         },
@@ -185,7 +211,13 @@ class AuthService {
                             include: [
                                 {
                                     model: Department,
-                                    as: "Department"
+                                    as: "Department",
+                                    include: [
+                                        {
+                                            model: faculty,
+                                            as: "Faculty"
+                                        },
+                                    ]
                                 },
                             ]
                         },
@@ -195,7 +227,13 @@ class AuthService {
                             include: [
                                 {
                                     model: Department,
-                                    as: "Department"
+                                    as: "Department",
+                                    include: [
+                                        {
+                                            model: faculty,
+                                            as: "Faculty"
+                                        },
+                                    ]
                                 },
                             ]
                         },
@@ -234,6 +272,7 @@ class AuthService {
                         name: ((_r = users.Advisor) === null || _r === void 0 ? void 0 : _r.name) || ((_s = users.Student) === null || _s === void 0 ? void 0 : _s.name) || ((_t = users.chairman) === null || _t === void 0 ? void 0 : _t.name) || users.name,
                         surname: ((_u = users.Advisor) === null || _u === void 0 ? void 0 : _u.surname) || ((_v = users.Student) === null || _v === void 0 ? void 0 : _v.surname) || ((_w = users.chairman) === null || _w === void 0 ? void 0 : _w.surname) || users.userSuperAdmin,
                         department: ((_x = users.Advisor) === null || _x === void 0 ? void 0 : _x.Department) || ((_y = users.Student) === null || _y === void 0 ? void 0 : _y.Department) || ((_z = users.chairman) === null || _z === void 0 ? void 0 : _z.Department) || users.userSuperAdmin,
+                        faculty: ((_1 = (_0 = users.Advisor) === null || _0 === void 0 ? void 0 : _0.Department) === null || _1 === void 0 ? void 0 : _1.Faculty) || ((_2 = users.Student) === null || _2 === void 0 ? void 0 : _2.Department.Faculty) || ((_3 = users.chairman) === null || _3 === void 0 ? void 0 : _3.Department.Faculty) || users.userSuperAdmin,
                         year: yield this.getAcademicYear(),
                         status: status,
                     },
