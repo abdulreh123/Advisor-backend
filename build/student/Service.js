@@ -97,16 +97,17 @@ class DepartmentService {
                 let totalPts = 0;
                 let totalcredits = 0;
                 const groups = result.Group;
-                const academicYears = yield groups.map((group) => group.studentscourses.academicYear);
+                const approved = groups.filter((course) => course.studentscourses.approvedBy !== null);
+                const academicYears = yield approved.map((group) => group.studentscourses.academicYear);
                 const uniqueArray = academicYears.filter(function (item, pos) {
                     return academicYears.indexOf(item) == pos;
                 });
                 yield Promise.all(yield uniqueArray.map((group) => __awaiter(this, void 0, void 0, function* () {
                     let status;
                     const year = yield groups.filter((year) => year.studentscourses.academicYear === group);
-                    const approved = year.filter((course) => course.studentscourses.approvedBy !== null);
-                    const totalcrPts = yield approved.map((item) => { var _a; return parseInt((_a = item === null || item === void 0 ? void 0 : item.studentscourses) === null || _a === void 0 ? void 0 : _a.CrPts); }).reduce((prev, next) => prev + next);
-                    const totalcredit = yield approved.map((item) => parseInt(item.Course.credit)).reduce((prev, next) => prev + next);
+                    //const approved = year.filter((course: any) => course.studentscourses.approvedBy !== null)
+                    const totalcrPts = yield (year === null || year === void 0 ? void 0 : year.map((item) => { var _a; return parseInt((_a = item === null || item === void 0 ? void 0 : item.studentscourses) === null || _a === void 0 ? void 0 : _a.CrPts); }).reduce((prev, next) => prev + next));
+                    const totalcredit = yield (year === null || year === void 0 ? void 0 : year.map((item) => parseInt(item.Course.credit)).reduce((prev, next) => prev + next));
                     totalPts = totalPts + totalcrPts;
                     totalcredits = totalcredits + totalcredit;
                     if (totalcrPts / totalcredit > 3) {
@@ -123,7 +124,7 @@ class DepartmentService {
                     }
                     const data = {
                         year: group,
-                        courses: approved,
+                        courses: year,
                         totalcrPts: totalcrPts,
                         totalcredit: totalcredit,
                         status: status,
@@ -316,7 +317,6 @@ class DepartmentService {
             try {
                 yield Student.update(Object.assign({}, data), { where: { id: studentId } });
                 const department = yield this.getStudent(studentId);
-                console.log(data.englishScore);
                 if (data.englishScore < 60) {
                     yield Student.update({ departmentId: 5 }, { where: { id: studentId } });
                 }
