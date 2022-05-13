@@ -308,7 +308,6 @@ return year.data.year
         { where: { id: studentId } }
       );
       const department = await this.getStudent(studentId);
-      console.log(data.englishScore)
       if(data.englishScore<60){
        await Student.update({departmentId:5},{where:{id:studentId}})
       }
