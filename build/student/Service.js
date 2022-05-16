@@ -105,11 +105,31 @@ class DepartmentService {
                 yield Promise.all(yield uniqueArray.map((group) => __awaiter(this, void 0, void 0, function* () {
                     let status;
                     const year = yield groups.filter((year) => year.studentscourses.academicYear === group);
-                    //const approved = year.filter((course: any) => course.studentscourses.approvedBy !== null)
                     const totalcrPts = yield (year === null || year === void 0 ? void 0 : year.map((item) => { var _a; return parseInt((_a = item === null || item === void 0 ? void 0 : item.studentscourses) === null || _a === void 0 ? void 0 : _a.CrPts); }).reduce((prev, next) => prev + next));
                     const totalcredit = yield (year === null || year === void 0 ? void 0 : year.map((item) => parseInt(item.Course.credit)).reduce((prev, next) => prev + next));
+                    // totalPts=totalPts+totalcrPts
+                    // totalcredits=totalcredits+totalcredit
                     totalPts = totalPts + totalcrPts;
                     totalcredits = totalcredits + totalcredit;
+                    const checkoIfTaken = year.map((yea) => {
+                        var _a;
+                        const exists = approved.filter((app) => app.courseId === yea.courseId);
+                        if (exists.length > 1) {
+                            const sort = exists.sort((a, b) => {
+                                return b.studentscourses.CrPts - a.studentscourses.CrPts;
+                            });
+                            const checksem = exists.filter((app) => { var _a; return app.studentscourses.academicYear === group && app.studentscourses.CrPts == ((_a = sort[0]) === null || _a === void 0 ? void 0 : _a.studentscourses.CrPts); });
+                            if (checksem.length > 0) {
+                                totalcredits = totalcredits - ((_a = checksem[0]) === null || _a === void 0 ? void 0 : _a.Course.credit);
+                                sort.map((course, index) => {
+                                    if (index !== 0) {
+                                        console.log(course === null || course === void 0 ? void 0 : course.studentscourses.CrPts);
+                                        totalPts = totalPts - (course === null || course === void 0 ? void 0 : course.studentscourses.CrPts);
+                                    }
+                                });
+                            }
+                        }
+                    });
                     if (totalcrPts / totalcredit > 3) {
                         status = 'Honours';
                     }
@@ -454,9 +474,9 @@ class DepartmentService {
                 const student = yield this.getStudent(studentId);
                 const department = yield departmentModel.findByPk(student.departmentId);
                 const coursesTaken = yield student.Group.filter((course) => {
-                    var _a, _b, _c;
+                    var _a, _b;
                     return ((_a = course.studentscourses) === null || _a === void 0 ? void 0 : _a.grade) !== null &&
-                        ((_b = course.studentscourses) === null || _b === void 0 ? void 0 : _b.grade) !== "FF" || ((_c = course.studentscourses) === null || _c === void 0 ? void 0 : _c.academicYear) !== year;
+                        ((_b = course.studentscourses) === null || _b === void 0 ? void 0 : _b.grade) !== "FF";
                 }).map((course) => {
                     return course === null || course === void 0 ? void 0 : course.Course.code;
                 });

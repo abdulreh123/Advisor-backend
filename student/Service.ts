@@ -21,12 +21,12 @@ export default class DepartmentService {
     const hash = await bcrypt.hash(password, salt);
     return hash;
   };
-  private getAcademicYear = async() => {
+  private getAcademicYear = async () => {
     const year = await firestoreService.get(
       'academic',
       'qYX8QXS3XW564eKdfPTP'
-  )
-return year.data.year
+    )
+    return year.data.year
   }
   //  Create Student
   createStudent = async (data: any): Promise<any> => {
@@ -81,8 +81,8 @@ return year.data.year
         ],
       });
       let transcript: any = []
-      let totalPts:number=0
-      let totalcredits:number=0
+      let totalPts: number = 0
+      let totalcredits: number = 0
       const groups = result.Group
       const approved = groups.filter((course: any) => course.studentscourses.approvedBy !== null)
       const academicYears = await approved.map((group: any) => group.studentscourses.academicYear)
@@ -92,29 +92,48 @@ return year.data.year
       await Promise.all(await uniqueArray.map(async (group: any) => {
         let status
         const year = await groups.filter((year: any) => year.studentscourses.academicYear === group)
-        //const approved = year.filter((course: any) => course.studentscourses.approvedBy !== null)
         const totalcrPts = await year?.map((item: any) => parseInt(item?.studentscourses?.CrPts)).reduce((prev: number, next: number) => prev + next);
         const totalcredit = await year?.map((item: any) => parseInt(item.Course.credit)).reduce((prev: number, next: number) => prev + next);
-        totalPts=totalPts+totalcrPts
-        totalcredits=totalcredits+totalcredit
-       if(totalcrPts / totalcredit>3){
-         status='Honours'
-       }
-       if(totalcrPts / totalcredit>3.5){
-         status='High honours'
-       }
-       if(totalcrPts / totalcredit>2){
-         status='Successful '
-       }
-       if(totalcrPts / totalcredit<2){
-         status='Unsuccessful '
-       }
+        // totalPts=totalPts+totalcrPts
+        // totalcredits=totalcredits+totalcredit
+        totalPts = totalPts + totalcrPts
+        totalcredits = totalcredits + totalcredit
+        const checkoIfTaken = year.map((yea: any) => {
+          const exists = approved.filter((app: any) => app.courseId === yea.courseId)
+          if (exists.length > 1) {
+            const sort = exists.sort((a: any, b: any) => {
+              return b.studentscourses.CrPts - a.studentscourses.CrPts;
+            });
+            const checksem = exists.filter((app: any) => app.studentscourses.academicYear === group && app.studentscourses.CrPts == sort[0]?.studentscourses.CrPts)
+            if (checksem.length > 0) {
+              totalcredits = totalcredits - checksem[0]?.Course.credit
+              sort.map((course: any, index: number) => {
+                if(index!==0){
+                  console.log(course?.studentscourses.CrPts)
+                  totalPts = totalPts - course?.studentscourses.CrPts
+                }
+              })
+            }
+          }
+        })
+        if (totalcrPts / totalcredit > 3) {
+          status = 'Honours'
+        }
+        if (totalcrPts / totalcredit > 3.5) {
+          status = 'High honours'
+        }
+        if (totalcrPts / totalcredit > 2) {
+          status = 'Successful '
+        }
+        if (totalcrPts / totalcredit < 2) {
+          status = 'Unsuccessful '
+        }
         const data = {
           year: group,
           courses: year,
           totalcrPts: totalcrPts,
           totalcredit: totalcredit,
-          status:status,
+          status: status,
           gpa: totalcrPts / totalcredit,
           cgpa: totalPts / totalcredits
         }
@@ -220,7 +239,7 @@ return year.data.year
       });
       const allCourses = await Courses.findAll({
         where: {
-          departmentId:  {
+          departmentId: {
             [Op.or]: [departmentId, 4]
           }
         }
@@ -309,8 +328,8 @@ return year.data.year
         { where: { id: studentId } }
       );
       const department = await this.getStudent(studentId);
-      if(data.englishScore<60){
-       await Student.update({departmentId:5},{where:{id:studentId}})
+      if (data.englishScore < 60) {
+        await Student.update({ departmentId: 5 }, { where: { id: studentId } })
       }
       return department;
     } catch (error) {
@@ -354,10 +373,10 @@ return year.data.year
           }
         }))
       }
-      if(data.type==="add"){
+      if (data.type === "add") {
         if (status === 'Student') {
           await Notification.create({ content: `${student.name} courses are waiting for your approval`, receiver: student.advisorId, type: "normal" })
-        }else{
+        } else {
           await Notification.create({ content: `Your courses has been approved`, receiver: student.userId, type: "normal" })
         }
       }
@@ -382,11 +401,11 @@ return year.data.year
     data: any
   ): Promise<any> => {
     try {
-      const course = await Group.findByPk(courseId,{
-        include:[
+      const course = await Group.findByPk(courseId, {
+        include: [
           {
-            model:Courses,
-            as:'Course'
+            model: Courses,
+            as: 'Course'
           }
         ]
       })
@@ -394,9 +413,9 @@ return year.data.year
       await StudentCourses.update(
         {
           grade: data.grade,
-          midtermOne:data.midtermOne,
-          midtermTwo:data.midtermTwo,
-          final:data.final,
+          midtermOne: data.midtermOne,
+          midtermTwo: data.midtermTwo,
+          final: data.final,
           CrPts: points
         },
         { where: { studentId: studentId, courseGroupId: courseId } }
@@ -460,7 +479,7 @@ return year.data.year
       const student = await this.getStudent(studentId);
       const department = await departmentModel.findByPk(student.departmentId);
       const coursesTaken = await student.Group.filter((course: any) => course.studentscourses?.grade !== null &&
-        course.studentscourses?.grade !== "FF" || course.studentscourses?.academicYear !==year ).map((course: any) => {
+        course.studentscourses?.grade !== "FF").map((course: any) => {
           return course?.Course.code
         })
       // get offered courses
@@ -473,36 +492,36 @@ return year.data.year
             model: Courses,
             as: "Course",
             where: {
-            [Op.and]:{
-              departmentId: {
-                [Op.or]: [student.departmentId,4]
-              },
-              facultyId: department.facultyId
-            }
+              [Op.and]: {
+                departmentId: {
+                  [Op.or]: [student.departmentId, 4]
+                },
+                facultyId: department.facultyId
+              }
             }
           }
         ]
       })
-      
-      if(allGroup.length===0){
-      const allCourses= await Courses.findAll({
-        where: {
-          [Op.and]:{
-            departmentId: {
-              [Op.or]: [student.departmentId,4]
-            },
-            facultyId: department.facultyId
+
+      if (allGroup.length === 0) {
+        const allCourses = await Courses.findAll({
+          where: {
+            [Op.and]: {
+              departmentId: {
+                [Op.or]: [student.departmentId, 4]
+              },
+              facultyId: department.facultyId
+            }
           }
-          }
-      }) 
+        })
         //remove courses which are taken
         const remove = await allCourses.filter((course: any) => !coursesTaken.includes(course.code))
         const prerequisites = await remove.filter((course: any) => coursesTaken.includes(course.prerequisites) || course.prerequisites === null)
         const totalcredit = await prerequisites.map((item: any) => parseInt(item.credit)).reduce((prev: number, next: number) => prev + next);
-        const prerequisitesId = prerequisites.map((group:any)=> group.id)
+        const prerequisitesId = prerequisites.map((group: any) => group.id)
         const result = await allCourses.filter((course: any) => prerequisitesId.includes(course.id))
         let credits: number = 0
-        const creditLimit = year.includes('Summer')? 12:21
+        const creditLimit = year.includes('Summer') ? 12 : 21
         const automation = await result.map((courses: any) => {
           if (totalcredit < creditLimit) {
             return courses
@@ -514,8 +533,8 @@ return year.data.year
           }
         })
         const removeNull = await automation.filter((Course: any) => Course !== undefined)
-       return removeNull
-      }else{
+        return removeNull
+      } else {
         const CoursesOffered = await allGroup?.map((course: any) => course.Course)
         CoursesOffered.sort((a: any, b: any) => parseFloat(a.semester) - parseFloat(b.semester));
         //remove repeated courses
@@ -525,8 +544,8 @@ return year.data.year
         //check if prerequisites is done
         const prerequisites = await remove.filter((course: any) => coursesTaken.includes(course.prerequisites) || course.prerequisites === null)
         const totalcredit = await prerequisites.map((item: any) => parseInt(item.credit)).reduce((prev: number, next: number) => prev + next);
-        
-        const prerequisitesId = prerequisites.map((group:any)=> group.id)
+
+        const prerequisitesId = prerequisites.map((group: any) => group.id)
         const result = await allGroup.filter((course: any) => prerequisitesId.includes(course.Course.id))
         let credits: number = 0
         const automation = await result.map((courses: any) => {
@@ -563,26 +582,26 @@ return year.data.year
       throw error
     }
   };
-  getStudentAnnoucements = async (studentId:number): Promise<any> => {
+  getStudentAnnoucements = async (studentId: number): Promise<any> => {
     try {
-   const studentGroup = await StudentCourses.findAll({
-    studentId:studentId
-   })
-   let groupIds =await studentGroup.map((student:any)=>student.groupId)
-   groupIds.push(null)
-   const annoucements = Annoucementmodel.findAll({
-     where:{ 
-        groupIdId: {
-      [Op.or]: groupIds
-    },  
-    include: [
-      {
-        model: Group,
-        as: "Group"
-      },
-    ]
-     }
-   })
+      const studentGroup = await StudentCourses.findAll({
+        studentId: studentId
+      })
+      let groupIds = await studentGroup.map((student: any) => student.groupId)
+      groupIds.push(null)
+      const annoucements = Annoucementmodel.findAll({
+        where: {
+          groupIdId: {
+            [Op.or]: groupIds
+          },
+          include: [
+            {
+              model: Group,
+              as: "Group"
+            },
+          ]
+        }
+      })
       return annoucements;
     } catch (error) {
       throw error;
