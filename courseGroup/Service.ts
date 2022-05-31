@@ -228,7 +228,6 @@ export default class GroupService {
       if(year.data.year?.includes("Spring")){
         semester=[2,4,6,8]
       }
-      console.log(semester)
       if(!year.data.status){
         const courses = await Course.findAll({
           where:{
@@ -237,7 +236,7 @@ export default class GroupService {
             },
           }
         })
-        courses.map(async(course:any)=>{
+       await courses.map(async(course:any)=>{
           const data ={
             name:course.code,
             lecturerId :4,

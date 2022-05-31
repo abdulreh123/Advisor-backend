@@ -229,7 +229,6 @@ class GroupService {
                 if ((_b = year.data.year) === null || _b === void 0 ? void 0 : _b.includes("Spring")) {
                     semester = [2, 4, 6, 8];
                 }
-                console.log(semester);
                 if (!year.data.status) {
                     const courses = yield Course.findAll({
                         where: {
@@ -238,7 +237,7 @@ class GroupService {
                             },
                         }
                     });
-                    courses.map((course) => __awaiter(this, void 0, void 0, function* () {
+                    yield courses.map((course) => __awaiter(this, void 0, void 0, function* () {
                         const data = {
                             name: course.code,
                             lecturerId: 4,

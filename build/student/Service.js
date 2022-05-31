@@ -105,7 +105,7 @@ class DepartmentService {
                 yield Promise.all(yield uniqueArray.map((group) => __awaiter(this, void 0, void 0, function* () {
                     let status;
                     const year = yield groups.filter((year) => year.studentscourses.academicYear === group);
-                    const totalcrPts = yield (year === null || year === void 0 ? void 0 : year.map((item) => { var _a; return parseInt((_a = item === null || item === void 0 ? void 0 : item.studentscourses) === null || _a === void 0 ? void 0 : _a.CrPts); }).reduce((prev, next) => prev + next));
+                    const totalcrPts = yield (year === null || year === void 0 ? void 0 : year.map((item) => { var _a; return parseFloat((_a = item === null || item === void 0 ? void 0 : item.studentscourses) === null || _a === void 0 ? void 0 : _a.CrPts); }).reduce((prev, next) => prev + next));
                     const totalcredit = yield (year === null || year === void 0 ? void 0 : year.map((item) => parseInt(item.Course.credit)).reduce((prev, next) => prev + next));
                     // totalPts=totalPts+totalcrPts
                     // totalcredits=totalcredits+totalcredit
