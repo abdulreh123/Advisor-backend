@@ -116,18 +116,19 @@ export default class DepartmentService {
             }
           }
         })
+        if (totalcrPts / totalcredit > 2) {
+          status = 'Successful '
+        }
         if (totalcrPts / totalcredit > 3) {
           status = 'Honours'
         }
         if (totalcrPts / totalcredit > 3.5) {
           status = 'High honours'
         }
-        if (totalcrPts / totalcredit > 2) {
-          status = 'Successful '
-        }
         if (totalcrPts / totalcredit < 2) {
           status = 'Unsuccessful '
         }
+        console.log(status)
         const data = {
           year: group,
           courses: year,
