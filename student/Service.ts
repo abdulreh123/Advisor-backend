@@ -93,7 +93,7 @@ export default class DepartmentService {
         let status
         const year = await groups.filter((year: any) => year.studentscourses.academicYear === group)
         const totalcrPts = await year?.map((item: any) => parseFloat(item?.studentscourses?.CrPts)).reduce((prev: number, next: number) => prev + next);
-        const totalcredit = await year?.map((item: any) => parseInt(item.Course.credit)).reduce((prev: number, next: number) => prev + next);
+        const totalcredit = await year?.map((item: any) => parseFloat(item.Course.credit)).reduce((prev: number, next: number) => prev + next);
         // totalPts=totalPts+totalcrPts
         // totalcredits=totalcredits+totalcredit
         totalPts = totalPts + totalcrPts
