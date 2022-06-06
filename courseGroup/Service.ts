@@ -149,6 +149,7 @@ export default class GroupService {
   getDepartmentGroup = async (departmentId: number): Promise<any> => {
     try {
       const department = await Department.findByPk(departmentId);
+      console.log(departmentId)
       const group = await Group.findAll({
         include: [
           {
