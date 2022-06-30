@@ -109,7 +109,6 @@ export default class DepartmentService {
               totalcredits = totalcredits - checksem[0]?.Course.credit
               sort.map((course: any, index: number) => {
                 if(index!==0){
-                  console.log(course?.studentscourses.CrPts)
                   totalPts = totalPts - course?.studentscourses.CrPts
                 }
               })
@@ -128,7 +127,6 @@ export default class DepartmentService {
         if (totalcrPts / totalcredit < 2) {
           status = 'Unsuccessful '
         }
-        console.log(status)
         const data = {
           year: group,
           courses: year,
@@ -188,6 +186,7 @@ export default class DepartmentService {
           }
         ]
       });
+      if(result===null){return []}
       const groups = await result?.Group
       const timetable = await Promise.all(this.WEEK_DAYS.map(async (days: string) => {
         let weekDay: any = []

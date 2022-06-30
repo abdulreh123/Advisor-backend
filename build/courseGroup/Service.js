@@ -61,7 +61,6 @@ class GroupService {
         this.getLecturerGroup = (lecturerId) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const year = this.getActiveYear();
-                console.log(year);
                 const group = yield Group.findAll({
                     where: {
                         lecturerId: lecturerId,
@@ -164,9 +163,6 @@ class GroupService {
         this.getDepartmentGroup = (departmentId) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const department = yield Department.findByPk(departmentId);
-                console.log("efjejnef");
-                console.log(departmentId);
-                console.log(department.facultyId);
                 const group = yield Group.findAll({
                     include: [
                         {

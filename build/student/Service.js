@@ -123,7 +123,6 @@ class DepartmentService {
                                 totalcredits = totalcredits - ((_a = checksem[0]) === null || _a === void 0 ? void 0 : _a.Course.credit);
                                 sort.map((course, index) => {
                                     if (index !== 0) {
-                                        console.log(course === null || course === void 0 ? void 0 : course.studentscourses.CrPts);
                                         totalPts = totalPts - (course === null || course === void 0 ? void 0 : course.studentscourses.CrPts);
                                     }
                                 });
@@ -142,7 +141,6 @@ class DepartmentService {
                     if (totalcrPts / totalcredit < 2) {
                         status = 'Unsuccessful ';
                     }
-                    console.log(status);
                     const data = {
                         year: group,
                         courses: year,
@@ -204,6 +202,9 @@ class DepartmentService {
                         }
                     ]
                 });
+                if (result === null) {
+                    return [];
+                }
                 const groups = yield (result === null || result === void 0 ? void 0 : result.Group);
                 const timetable = yield Promise.all(this.WEEK_DAYS.map((days) => __awaiter(this, void 0, void 0, function* () {
                     let weekDay = [];

@@ -47,7 +47,6 @@ export default class GroupService {
   getLecturerGroup = async (lecturerId:number): Promise<any> => {
     try {
       const year:any =this.getActiveYear()
-      console.log(year)
       const group = await Group.findAll({
         where:{
           lecturerId:lecturerId,
@@ -149,9 +148,6 @@ export default class GroupService {
   getDepartmentGroup = async (departmentId: number): Promise<any> => {
     try {
       const department = await Department.findByPk(departmentId);
-      console.log("efjejnef")
-      console.log(departmentId)
-      console.log(department.facultyId)
       const group = await Group.findAll({
         include: [
           {
